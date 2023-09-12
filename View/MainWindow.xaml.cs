@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using ViewModel;
 
 namespace View
 {
@@ -13,9 +14,6 @@ namespace View
         public MainWindow()
         {
             InitializeComponent();
-            //Image startButton = new Image();
-            //startButton.Source = new BitmapImage(new Uri("startbutton.png"));
-            //StartStopButton.Content = startButton;
         }
     }
 }

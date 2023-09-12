@@ -7,9 +7,13 @@
         xmlns:local="clr-namespace:View"
         mc:Ignorable="d"
         Title="NetworkScanner" Height="600" Width="300">
+
+
     <Window.DataContext>
         <vm:MainWindowVM/>
     </Window.DataContext>
+
+
     <Grid>
         <StackPanel Orientation="Vertical">
             <Menu Height="25" VerticalAlignment="Top">
@@ -19,16 +23,18 @@
                     <MenuItem Header="Exit" ></MenuItem>
                 </MenuItem>
             </Menu>
-            <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="DeviceComboBox" Height="35" Width="255" DisplayMemberPath="Name"/>
-                <Button Content="R" Width="45" Command="{Binding RefreshBtn}"/>
-            </StackPanel>
+
+            
+
+            <ComboBox Height="35" DisplayMemberPath="Name" ItemsSource="{Binding DeviceComboBox}" SelectedItem="{Binding SelectedDevice}"/>
+
+
             <Button x:Name="StartStopButton" Height="200" IsDefault="False" IsCancel="False" Command="{Binding StartBtn}">
                 <Image Source="Assets/startbutton.png"/>
             </Button>
-            <TextBlock Text="Компьютеров в сети: "/>
-            <TextBlock Text="Компьютеров в сети: "/>
-            <TextBlock Text="Компьютеров в сети: "/>
+
+
+            <TextBlock Text="{Binding TotalInfo}"/>
         </StackPanel>
     </Grid>
 </Window>
