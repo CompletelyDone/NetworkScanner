@@ -7,7 +7,22 @@ namespace ViewModel
 {
     public class MainWindowVM : ViewModelBase
     {
-        public PacketDevice SelectedDevice { get; set; }
+        private PacketDevice selectedDevice;
+        public PacketDevice SelectedDevice 
+        {
+            get
+            {
+                return selectedDevice;
+            }
+            set
+            {
+                if (selectedDevice != value)
+                {
+                    selectedDevice = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private Thread scannerThread;
         private DeviceScanner deviceScanner;
         public MainWindowVM() 
@@ -24,7 +39,22 @@ namespace ViewModel
         }
         public Command StartBtn { get; }
         public IList<LivePacketDevice> DeviceComboBox { get; set; }
-        public string TotalInfo { get; set; }
+        private string totalInfo;
+        public string TotalInfo 
+        {
+            get
+            {
+                return totalInfo;
+            }
+            set
+            {
+                if (totalInfo != value)
+                {
+                    totalInfo = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private void RefreshDeviceList()
         {
