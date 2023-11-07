@@ -8,7 +8,7 @@ namespace ViewModel
     public class MainWindowVM : ViewModelBase
     {
         private PacketDevice selectedDevice;
-        public PacketDevice SelectedDevice 
+        public PacketDevice SelectedDevice
         {
             get
             {
@@ -25,7 +25,7 @@ namespace ViewModel
         }
         private Thread scannerThread;
         private DeviceScanner deviceScanner;
-        public MainWindowVM() 
+        public MainWindowVM()
         {
             scannerThread = new Thread(aga1);
 
@@ -37,10 +37,30 @@ namespace ViewModel
 
             TotalInfo = "Привет";
         }
-        public Command StartBtn { get; }
+        public Command StartBtn { get; private set; }
+        private bool isStarted = false;
+        private bool CanStart()
+        {
+            if(selectedDevice == null)
+            {
+                return false;
+            }
+            return isStarted ? false : true;
+        }
+        private async void Start()
+        {
+            await Task.Run(() =>
+            {
+
+            });
+        }
+
+
+
+
         public IList<LivePacketDevice> DeviceComboBox { get; set; }
         private string totalInfo;
-        public string TotalInfo 
+        public string TotalInfo
         {
             get
             {
