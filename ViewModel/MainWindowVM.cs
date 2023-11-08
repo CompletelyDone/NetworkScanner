@@ -7,7 +7,7 @@ namespace ViewModel
 {
     public class MainWindowVM : ViewModelBase
     {
-        private PacketDevice selectedDevice;
+        private PacketDevice? selectedDevice;
         public PacketDevice SelectedDevice
         {
             get
@@ -23,15 +23,12 @@ namespace ViewModel
                 }
             }
         }
-        private Thread scannerThread;
         private DeviceScanner deviceScanner;
         public MainWindowVM()
         {
-            scannerThread = new Thread(aga1);
-
             deviceScanner = new DeviceScanner();
 
-            StartBtn = new Command(aga);
+            StartBtn = new Command(Start, CanStart);
 
             DeviceComboBox = deviceScanner.Scan();
 
@@ -59,7 +56,7 @@ namespace ViewModel
 
 
         public IList<LivePacketDevice> DeviceComboBox { get; set; }
-        private string totalInfo;
+        private string? totalInfo;
         public string TotalInfo
         {
             get
