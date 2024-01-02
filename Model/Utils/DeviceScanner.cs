@@ -4,7 +4,7 @@ namespace Model.Utils
 {
     public class DeviceScanner
     {
-        public IList<ILiveDevice> Scan()
+        public static IList<ILiveDevice> Scan()
         {
             return CaptureDeviceList.Instance;
         }

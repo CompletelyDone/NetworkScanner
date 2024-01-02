@@ -9,9 +9,9 @@ namespace View.Windows
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class StartUpWindow : Window
     {
-        public MainWindow()
+        public StartUpWindow()
         {
             InitializeComponent();
         }

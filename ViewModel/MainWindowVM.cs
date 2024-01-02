@@ -23,14 +23,11 @@ namespace ViewModel
                 }
             }
         }
-        private DeviceScanner deviceScanner;
         public MainWindowVM()
         {
-            deviceScanner = new DeviceScanner();
-
             StartBtn = new Command(Start, CanStart);
 
-            DeviceComboBox = deviceScanner.Scan();
+            DeviceComboBox = DeviceScanner.Scan();
 
             TotalInfo = "Привет";
         }
@@ -48,7 +45,7 @@ namespace ViewModel
         {
             await Task.Run(() =>
             {
-
+                selectedDevice?.Open(DeviceModes.Promiscuous, 1000);
             });
         }
 
@@ -76,15 +73,7 @@ namespace ViewModel
         private void RefreshDeviceList()
         {
             DeviceComboBox.Clear();
-            DeviceComboBox = deviceScanner.Scan();
-        }
-        private void aga()
-        {
-            TotalInfo = SelectedDevice.Name;
-        }
-        private void aga1()
-        {
-            Process.GetCurrentProcess().Kill();
+            DeviceComboBox = DeviceScanner.Scan();
         }
     }
 }

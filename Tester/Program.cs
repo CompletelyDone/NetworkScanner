@@ -1,18 +1,21 @@
-﻿using Model.Utils;
-using PcapDotNet.Core;
+﻿using Model.Database.SQLite;
+using Model.Utils;
 
-DeviceScanner deviceScanner = new DeviceScanner();
-IList<LivePacketDevice> list;
-list = deviceScanner.Scan();
+var devs = DeviceScanner.Scan();
 
-Console.WriteLine(list.Count);
+SQLiteDBContext db = new SQLiteDBContext(Path.GetTempPath());
+PassiveCapture scanner = new PassiveCapture(devs[0], db);
 
-foreach (var device in list)
-{
-    Console.WriteLine(device.Name);
-    Console.WriteLine(device.Description);
-    foreach(var addr in device.Addresses)
-    {
-        Console.WriteLine(addr.Address);
-    }
-}
+CancellationTokenSource cts = new CancellationTokenSource();
+CancellationToken ct = cts.Token;
+
+Console.WriteLine("Должно заработать");
+scanner.StartCapturePackets(ct);
+
+
+
+Console.WriteLine("Нажми для выключения");
+Console.ReadLine();
+cts.Cancel();
+Console.WriteLine("Должно выключиться");
+Console.ReadKey();
