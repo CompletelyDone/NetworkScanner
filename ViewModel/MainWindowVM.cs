@@ -1,5 +1,5 @@
-﻿using Model;
-using PcapDotNet.Core;
+﻿using Model.Utils;
+using SharpPcap;
 using System.Diagnostics;
 using ViewModel.Base;
 
@@ -7,8 +7,8 @@ namespace ViewModel
 {
     public class MainWindowVM : ViewModelBase
     {
-        private PacketDevice? selectedDevice;
-        public PacketDevice SelectedDevice
+        private ILiveDevice? selectedDevice;
+        public ILiveDevice? SelectedDevice
         {
             get
             {
@@ -55,7 +55,7 @@ namespace ViewModel
 
 
 
-        public IList<LivePacketDevice> DeviceComboBox { get; set; }
+        public IList<ILiveDevice> DeviceComboBox { get; set; }
         private string? totalInfo;
         public string TotalInfo
         {

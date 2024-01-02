@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Model
+namespace Model.Database
 {
     public class SQLiteDBContext : DbContext
     {

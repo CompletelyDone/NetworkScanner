@@ -1,4 +1,4 @@
-﻿using Model;
+﻿using Model.Utils;
 using PcapDotNet.Core;
 
 DeviceScanner deviceScanner = new DeviceScanner();

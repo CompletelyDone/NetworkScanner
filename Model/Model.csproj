@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9" />
-    <PackageReference Include="Pcap.Net.x64" Version="1.0.4.1" />
+    <PackageReference Include="SharpPcap" Version="6.2.5" />
   </ItemGroup>
 
 </Project>
