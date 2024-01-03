@@ -10,8 +10,8 @@ CancellationTokenSource cts = new CancellationTokenSource();
 CancellationToken ct = cts.Token;
 
 Console.WriteLine("Должно заработать");
-scanner.StartCapturePackets(ct);
 
+scanner.StartCapturePackets(ct);
 
 
 Console.WriteLine("Нажми для выключения");
