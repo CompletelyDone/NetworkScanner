@@ -13,6 +13,7 @@ namespace Model.Utils
     {
         private ILiveDevice device;
         private IDatabaseFunc database;
+        private Packet? packet;
         public PassiveCapture(ILiveDevice device, IDatabaseFunc database)
         {
             this.device = device;
@@ -25,13 +26,14 @@ namespace Model.Utils
             device.StartCapture();
             await Task.Delay(Timeout.Infinite, cnclToken);
             device.StopCapture();
+            device.Dispose();
         }
-        private void ReceivePacketHandler(object sender, PacketCapture e)
+        private void ReceivePacketHandler2(object sender, PacketCapture e)
         {
             var rawPacket = e.GetPacket();
             var packet = PacketDotNet.Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
             IPPacket? ipPacket = packet.Extract<PacketDotNet.IPPacket>();
-            if (ipPacket != null & ipPacket?.Protocol == PacketDotNet.ProtocolType.Tcp)
+            if (ipPacket != null & ipPacket?.Protocol == PacketDotNet.ProtocolType.Tcp) //Почти все tcp пакеты приходят с ACK, кроме RST и SYN
             {
                 var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
                 if (tcpPacket.Synchronize && !tcpPacket.Acknowledgment)
@@ -41,10 +43,6 @@ namespace Model.Utils
                     "Source:" + ipPacket?.SourceAddress + ":" + tcpPacket.SourcePort + " " +
                     "Destination:" + ipPacket?.DestinationAddress + ":" + tcpPacket.DestinationPort
                     );
-                }
-                if (!tcpPacket.Synchronize && tcpPacket.Acknowledgment) //Почти все пакеты происходят с ACK, кроме RST и SYN
-                {
-                    
                 }
                 if (tcpPacket.Synchronize && tcpPacket.Acknowledgment)
                 {
@@ -76,6 +74,39 @@ namespace Model.Utils
             {
                 var strangePacket = packet.Extract<ArpPacket>();
                 Console.WriteLine($"Protocol:{rawPacket.LinkLayerType}" + " " + strangePacket.HardwareAddressType);
+            }
+        }
+        private void ReceivePacketHandler(object sender, PacketCapture e)
+        {
+            var rawPacket = e.GetPacket();
+            packet = PacketDotNet.Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
+            IPPacket? ipPacket = packet.Extract<IPPacket>();
+            ArpPacket? arpPacket = packet.Extract<ArpPacket>();
+            if (ipPacket != null)
+            {
+                Console.Write("ip+");
+                TcpPacket? tcpPacket = packet.Extract<TcpPacket>();
+                if (tcpPacket != null)
+                {
+                    Console.WriteLine("tcp");
+                }
+                UdpPacket? udpPacket = packet.Extract<UdpPacket>();
+                if (udpPacket != null)
+                {
+                    Console.WriteLine("udp");
+                }
+            }
+            else if (packet is ArpPacket arpPack1et)
+            {
+
+            }
+            else if (packet is IcmpV4Packet icmpPacket)
+            {
+
+            }
+            else
+            {
+
             }
         }
     }
