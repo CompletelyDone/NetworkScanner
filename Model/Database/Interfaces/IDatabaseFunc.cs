@@ -8,5 +8,6 @@ namespace Model.Database.Interfaces
 {
     public interface IDatabaseFunc
     {
+
     }
 }

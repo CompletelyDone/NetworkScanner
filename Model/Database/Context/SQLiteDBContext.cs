@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Model.Database.Interfaces;
+using Model.Database.Repos;
 
 namespace Model.Database.SQLite
 {
@@ -10,6 +11,8 @@ namespace Model.Database.SQLite
         {
             this.path = path;
         }
+
+        public DbSet<Localhost> LocalHosts { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

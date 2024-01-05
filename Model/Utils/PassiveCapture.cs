@@ -12,12 +12,12 @@ namespace Model.Utils
     public class PassiveCapture
     {
         private ILiveDevice device;
-        private IDatabaseFunc database;
+        private IDatabaseFunc db;
         private Packet? packet;
         public PassiveCapture(ILiveDevice device, IDatabaseFunc database)
         {
             this.device = device;
-            this.database = database;
+            this.db = database;
         }
         public async Task StartCapturePackets(CancellationToken cnclToken)
         {
