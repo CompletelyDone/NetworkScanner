@@ -9,10 +9,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Exit.png" />
+    <None Remove="Assets\Info.png" />
+    <None Remove="Assets\Settings.png" />
+    <None Remove="Assets\Start.png" />
+    <None Remove="Assets\Stop.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Exit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Info.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Settings.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Stop.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Start.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\startbutton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

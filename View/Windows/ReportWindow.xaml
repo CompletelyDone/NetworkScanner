@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.Windows"
         mc:Ignorable="d"
-        Title="Отчет" Height="500" Width="800">
+        Title="NetworkScanner" Height="500" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -24,9 +24,22 @@
         </Menu>
 
         <!--Control Keys-->
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Button Content="Старт"/>
-            <Button Content="Стоп"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10 0 0 0">
+            <Button Margin="0 0 10 0">
+                <Image Source="../Assets/Start.png"/>
+            </Button>
+            <Button Margin="0 0 30 0" IsEnabled="False">
+                <Image Source="../Assets/Stop.png"/>
+            </Button>
+            <Button Margin="0 0 10 0">
+                <Image Source="../Assets/Settings.png"/>
+            </Button>
+            <Button Margin="0 0 10 0">
+                <Image Source="../Assets/Info.png"/>
+            </Button>
+            <Button>
+                <Image Source="../Assets/Exit.png"/>
+            </Button>
         </StackPanel>
 
         <!--Filter-->
@@ -40,15 +53,19 @@
                   GridLinesVisibility="Horizontal">
             <DataGrid.Columns>
                 <DataGridTextColumn IsReadOnly="True" Visibility="Collapsed" Header="Id"/>
-                <DataGridTextColumn IsReadOnly="True" Header="Время"/>
                 <DataGridTextColumn IsReadOnly="True" Header="IP Отправителя"/>
+                <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес Отправителя"/>
                 <DataGridTextColumn IsReadOnly="True" Header="IP Получателя"/>
+                <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес Получателя"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Протокол"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Информация"/>
             </DataGrid.Columns>
         </DataGrid>
         
         <!--Detail Information-->
-        
+        <DockPanel Grid.Row="4">
+            <TextBlock DockPanel.Dock="Top" Text="Содержание сетевого пакета"/>
+            <TextBlock DockPanel.Dock="Top"/>
+        </DockPanel>
     </Grid>
 </Window>
