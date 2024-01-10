@@ -6,7 +6,11 @@ namespace Model.Database.SQLite
 {
     public class SQLiteDBContext : DbContext, IDatabaseFunc
     {
-        private String path;
+        private String? path;
+        public SQLiteDBContext()
+        {
+            Database.EnsureCreated();
+        }
         public SQLiteDBContext(string path)
         {
             this.path = path;
@@ -16,7 +20,14 @@ namespace Model.Database.SQLite
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite($"Data Source={path}.db");
+            if(path != null)
+            {
+                optionsBuilder.UseSqlite($"Data Source={path}.db");
+            }
+            else
+            {
+                optionsBuilder.UseSqlite($"Data Source=DB/{DateTime.Now.ToLongTimeString()}.db");
+            }
         }
     }
 }

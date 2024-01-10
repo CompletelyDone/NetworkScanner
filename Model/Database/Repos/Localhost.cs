@@ -4,9 +4,8 @@ using System.Runtime.CompilerServices;
 
 namespace Model.Database.Repos
 {
-    public class Localhost : INotifyPropertyChanged
+    public class Localhost : BaseEntity, INotifyPropertyChanged
     {
-        public int Id { get; set; }
         private IPAddress localIP;
         public IPAddress LocalIP
         {

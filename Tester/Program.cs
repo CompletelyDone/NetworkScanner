@@ -3,7 +3,7 @@ using Model.Utils;
 
 var devs = DeviceScanner.Scan();
 
-SQLiteDBContext db = new SQLiteDBContext(Path.GetTempPath());
+SQLiteDBContext db = new SQLiteDBContext();
 PassiveCapture scanner = new PassiveCapture(devs[0], db);
 
 CancellationTokenSource cts = new CancellationTokenSource();

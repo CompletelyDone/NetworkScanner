@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Model.Database.Repos
 {
-    public class CapturedPacket : BaseEntity
+    public class BaseEntity
     {
-
+        public long Id { get; set; }
     }
 }

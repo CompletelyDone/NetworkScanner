@@ -9,21 +9,46 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="*" MinHeight="300"/>
             <RowDefinition Height="*" MinHeight="150"/>
         </Grid.RowDefinitions>
 
+        <!--Menu Panel-->
         <Menu Grid.Row="0"
               Height="25">
-            <MenuItem Height="25" Header="File"/>
-            <MenuItem Height="25" Header="Exit"/>
+            <MenuItem Height="25" Header="Файл"/>
+            <MenuItem Height="25" Header="Выбор сетевого устройства"/>
+            <MenuItem Height="25" Header="Выход"/>
         </Menu>
 
-        <DataGrid Grid.Row="1" 
+        <!--Control Keys-->
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Button Content="Старт"/>
+            <Button Content="Стоп"/>
+        </StackPanel>
+
+        <!--Filter-->
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <Label Content="Фильтр"/>
+            <TextBox Width="150" Background="BlanchedAlmond"/>
+        </StackPanel>
+        
+        <!--Information Panel-->
+        <DataGrid Grid.Row="3" 
                   GridLinesVisibility="Horizontal">
-            
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True" Visibility="Collapsed" Header="Id"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Время"/>
+                <DataGridTextColumn IsReadOnly="True" Header="IP Отправителя"/>
+                <DataGridTextColumn IsReadOnly="True" Header="IP Получателя"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Протокол"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Информация"/>
+            </DataGrid.Columns>
         </DataGrid>
         
+        <!--Detail Information-->
         
     </Grid>
 </Window>
