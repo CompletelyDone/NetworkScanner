@@ -65,7 +65,7 @@
         <!--Detail Information-->
         <DockPanel Grid.Row="4">
             <TextBlock DockPanel.Dock="Top" Text="Содержание сетевого пакета"/>
-            <TextBlock DockPanel.Dock="Top"/>
+            <TextBlock DockPanel.Dock="Top" Text="0000  bc 76 80 23 ab 02 34 bb  bc 76 80 23 ab 02 34 bb"/>
         </DockPanel>
     </Grid>
 </Window>
