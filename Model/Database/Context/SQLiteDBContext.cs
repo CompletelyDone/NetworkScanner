@@ -22,11 +22,15 @@ namespace Model.Database.SQLite
         {
             if(path != null)
             {
-                optionsBuilder.UseSqlite($"Data Source={path}.db");
+                optionsBuilder
+                    .UseLazyLoadingProxies()
+                    .UseSqlite($"Data Source={path}.db");
             }
             else
             {
-                optionsBuilder.UseSqlite($"Data Source=DB/{DateTime.Now.ToLongTimeString()}.db");
+                optionsBuilder
+                    .UseLazyLoadingProxies()
+                    .UseSqlite($"Data Source=DB/{DateTime.Now.ToLongTimeString()}.db");
             }
         }
     }
