@@ -8,9 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.15" />
+    <None Remove="Assets\vendorMacs.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.14" />
     <PackageReference Include="SharpPcap" Version="6.2.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\vendorMacs.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

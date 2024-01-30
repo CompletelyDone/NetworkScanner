@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "View", "View\View.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModel", "ViewModel\ViewModel.csproj", "{7EE5A60C-5804-433D-B05C-A9A59112C644}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{84434E61-B083-4790-9F6D-838C59864753}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkScanner.Model", "Model\NetworkScanner.Model.csproj", "{84434E61-B083-4790-9F6D-838C59864753}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{15E46DA2-7E74-446D-AF29-5E21C7BFEE34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tester", "Tester\Tester.csproj", "{15E46DA2-7E74-446D-AF29-5E21C7BFEE34}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkScanner.Database", "NetworkScanner.Database\NetworkScanner.Database.csproj", "{6B247889-0C83-4740-B376-7FE55FFC7E8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{15E46DA2-7E74-446D-AF29-5E21C7BFEE34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15E46DA2-7E74-446D-AF29-5E21C7BFEE34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15E46DA2-7E74-446D-AF29-5E21C7BFEE34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B247889-0C83-4740-B376-7FE55FFC7E8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B247889-0C83-4740-B376-7FE55FFC7E8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B247889-0C83-4740-B376-7FE55FFC7E8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B247889-0C83-4740-B376-7FE55FFC7E8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

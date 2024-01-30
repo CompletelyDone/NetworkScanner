@@ -1,6 +1,6 @@
 ﻿using SharpPcap;
 
-namespace Model.Utils
+namespace NetworkScanner.Model.Utils
 {
     public class DeviceScanner
     {

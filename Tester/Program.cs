@@ -1,10 +1,15 @@
-﻿using Model.Database.SQLite;
-using Model.Utils;
+﻿using NetworkScanner.Model;
+using NetworkScanner.Model.Utils;
 
+DictionaryOfMACbyVendors macbyVendors = new DictionaryOfMACbyVendors();
+
+Console.WriteLine(await macbyVendors.CompareMacAsync("00:1B:C5:00:00:01"));
+
+/*
 var devs = DeviceScanner.Scan();
 
 SQLiteDBContext db = new SQLiteDBContext("aga");
-PassiveCapture scanner = new PassiveCapture(devs[0], db);
+PacketCapturer scanner = new PacketCapturer(devs[0], db);
 
 CancellationTokenSource cts = new CancellationTokenSource();
 CancellationToken ct = cts.Token;
@@ -31,3 +36,4 @@ Console.ReadLine();
 cts.Cancel();
 Console.WriteLine("Должно выключиться");
 Console.ReadLine();
+*/

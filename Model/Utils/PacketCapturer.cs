@@ -1,23 +1,15 @@
-﻿using Model.Database.Interfaces;
-using PacketDotNet;
+﻿using PacketDotNet;
 using SharpPcap;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Model.Utils
+namespace NetworkScanner.Model.Utils
 {
-    public class PassiveCapture
+    public class PacketCapturer
     {
         private ILiveDevice device;
-        private IDatabaseFunc db;
         private Packet? packet;
-        public PassiveCapture(ILiveDevice device, IDatabaseFunc database)
+        public PacketCapturer(ILiveDevice device)
         {
             this.device = device;
-            this.db = database;  
         }
         public void StartCapturePackets(CancellationToken cnclToken)
         {
@@ -38,7 +30,7 @@ namespace Model.Utils
         private void ReceivePacketHandler(object sender, PacketCapture e)
         {
             var rawPacket = e.GetPacket();
-            packet = PacketDotNet.Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
+            packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
             IPPacket? ipPacket = packet.Extract<IPPacket>();
             ArpPacket? arpPacket = packet.Extract<ArpPacket>();
             if (ipPacket != null)
