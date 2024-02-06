@@ -1,15 +1,16 @@
 ﻿using NetworkScanner.Model;
+using NetworkScanner.Model.Models;
 using NetworkScanner.Model.Utils;
+using System.Collections.Concurrent;
 
-DictionaryOfMACbyVendors macbyVendors = new DictionaryOfMACbyVendors();
+//DictionaryOfMACbyVendors macbyVendors = new DictionaryOfMACbyVendors();
+//Console.WriteLine(await macbyVendors.CompareMacAsync("74563C6209B6"));
 
-Console.WriteLine(await macbyVendors.CompareMacAsync("00:1B:C5:00:00:01"));
 
-/*
 var devs = DeviceScanner.Scan();
+ConcurrentBag<Host> hosts = new ConcurrentBag<Host>();
 
-SQLiteDBContext db = new SQLiteDBContext("aga");
-PacketCapturer scanner = new PacketCapturer(devs[0], db);
+PacketCapturer scanner = new PacketCapturer(devs[0], hosts);
 
 CancellationTokenSource cts = new CancellationTokenSource();
 CancellationToken ct = cts.Token;
@@ -22,6 +23,12 @@ Console.WriteLine("Нажми для выключения");
 Console.ReadLine();
 cts.Cancel();
 Console.WriteLine("Должно выключиться");
+
+foreach (var host in hosts)
+{
+    Console.WriteLine(host);
+}
+
 Console.ReadLine();
 
 cts = new CancellationTokenSource();
@@ -36,4 +43,3 @@ Console.ReadLine();
 cts.Cancel();
 Console.WriteLine("Должно выключиться");
 Console.ReadLine();
-*/

@@ -1,4 +1,4 @@
-﻿using Model.Utils;
+﻿using NetworkScanner.Model.Utils;
 using SharpPcap;
 using System.Diagnostics;
 using ViewModel.Base;

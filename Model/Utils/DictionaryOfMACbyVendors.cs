@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace NetworkScanner.Model.Utils
 {
@@ -15,9 +14,10 @@ namespace NetworkScanner.Model.Utils
             foreach (XElement element in elements)
             {
                 string macPrefix = (string)element.Attribute("mac_prefix");
+                string newMacPrefix = macPrefix.Replace(":", "");
                 string vendorName = (string)element.Attribute("vendor_name");
 
-                macByVendors[macPrefix] = vendorName;
+                macByVendors[newMacPrefix] = vendorName;
             }
         }
         
@@ -34,7 +34,6 @@ namespace NetworkScanner.Model.Utils
                     }
                 }
             });
-            
             return str;
         }
     }

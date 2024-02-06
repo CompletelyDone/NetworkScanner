@@ -1,16 +1,27 @@
-﻿using PacketDotNet;
+﻿using NetworkScanner.Model.Models;
+using PacketDotNet;
 using SharpPcap;
+using System.Collections.Concurrent;
 
 namespace NetworkScanner.Model.Utils
 {
     public class PacketCapturer
     {
+        #region Fields and Props
         private ILiveDevice device;
         private Packet? packet;
-        public PacketCapturer(ILiveDevice device)
+        //private PassiveAnalyzer? passiveAnalyzer;
+        private ConcurrentBag<Host> hosts;
+        #endregion
+
+        #region CTOR
+        public PacketCapturer(ILiveDevice device, ConcurrentBag<Host> hosts)
         {
             this.device = device;
+            this.hosts = hosts;
         }
+        #endregion
+
         public void StartCapturePackets(CancellationToken cnclToken)
         {
             device.OnPacketArrival += new PacketArrivalEventHandler(ReceivePacketHandler);
@@ -31,34 +42,10 @@ namespace NetworkScanner.Model.Utils
         {
             var rawPacket = e.GetPacket();
             packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
-            IPPacket? ipPacket = packet.Extract<IPPacket>();
-            ArpPacket? arpPacket = packet.Extract<ArpPacket>();
-            if (ipPacket != null)
-            {
-                Console.Write("ip+");
-                TcpPacket? tcpPacket = packet.Extract<TcpPacket>();
-                if (tcpPacket != null)
-                {
-                    Console.WriteLine("tcp");
-                }
-                UdpPacket? udpPacket = packet.Extract<UdpPacket>();
-                if (udpPacket != null)
-                {
-                    Console.WriteLine("udp");
-                }
-            }
-            else if (packet is ArpPacket arpPack1et)
-            {
 
-            }
-            else if (packet is IcmpV4Packet icmpPacket)
-            {
-
-            }
-            else
-            {
-
-            }
+            DictionaryOfMACbyVendors macbyVendors = new DictionaryOfMACbyVendors();
+            var passiveAnalyzer = new PassiveAnalyzer(hosts, packet, macbyVendors);
+            passiveAnalyzer.StartAnalyze();
         }
     }
 }

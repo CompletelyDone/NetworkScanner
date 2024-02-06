@@ -1,25 +1,39 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace NetworkScanner.Model.Models
 {
     public class Host
     {
-        private Host(Guid id, IPAddress ip) 
+        #region Fields and Props
+        [Required] public Guid Id { get; set; }
+        [Required] public IPAddress IPAddress { get; set; }
+        public string? MacAddress { get; set; }
+        public string? NetworkInterfaceVendor {  get; set; }
+        [Required] public int TotalPackets { get; set; } = 0;
+        public event HostHandler? Notify;
+        #endregion
+
+        #region CTOR
+        public Host(Guid guid, IPAddress iPAddress)
         {
-            Id = id;
-            Address = ip;
+            Id = guid;
+            IPAddress = iPAddress;
+            Notify += ShowOutput;
+            Notify?.Invoke(iPAddress.ToString());
         }
-        public Guid Id { get; set; }
-        public IPAddress Address { get; set; } = null!;
-        public static (Host Host, string Error) Create(Guid id, IPAddress ip)
+        #endregion
+
+        private void ShowOutput(string message)
         {
-            var error = String.Empty;
+            Console.WriteLine(message);
+        }
 
-            //Можно добавить логику проверки
-
-            var host = new Host(id, ip);
-
-            return (host, error);
+        public override string ToString()
+        {
+            string returning = $"MAC: {MacAddress}. IP: {IPAddress}. Network Interface Vendor: {NetworkInterfaceVendor}. Total Packets: {TotalPackets}";
+            return returning;
         }
     }
+    public delegate void HostHandler(string message);
 }
