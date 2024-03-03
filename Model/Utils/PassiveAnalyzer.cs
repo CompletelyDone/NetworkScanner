@@ -81,6 +81,17 @@ namespace NetworkScanner.Model.Utils
                 }
                 hostSource.TotalPackets += 1;
             }
+            if(arpPacket != null)
+            {
+                hostSource = hosts.Where(x => x.IPAddress.ToString() == arpPacket.SenderProtocolAddress.ToString()).FirstOrDefault();
+                if (hostSource == null)
+                {
+                    hostSource = new Host(Guid.NewGuid(), arpPacket.SenderProtocolAddress);
+                    hostSource.MacAddress = arpPacket.SenderHardwareAddress.ToString();
+                    hosts.Add(hostSource);
+                }
+                hostSource.TotalPackets += 1;
+            }
             return hostSource;
         }
         private Host GetHostDest()
@@ -93,6 +104,17 @@ namespace NetworkScanner.Model.Utils
                 {
                     hostDest = new Host(Guid.NewGuid(), ipPacket.DestinationAddress);
                     hostDest.MacAddress = ethernetPacket.DestinationHardwareAddress.ToString();
+                    hosts.Add(hostDest);
+                }
+                hostDest.TotalPackets += 1;
+            }
+            if (arpPacket != null)
+            {
+                hostDest = hosts.Where(x => x.IPAddress.ToString() == arpPacket.TargetProtocolAddress.ToString()).FirstOrDefault();
+                if (hostDest == null)
+                {
+                    hostDest = new Host(Guid.NewGuid(), arpPacket.TargetProtocolAddress);
+                    hostDest.MacAddress = arpPacket.TargetHardwareAddress.ToString();
                     hosts.Add(hostDest);
                 }
                 hostDest.TotalPackets += 1;

@@ -5,7 +5,7 @@ using ViewModel.Base;
 
 namespace ViewModel
 {
-    public class MainWindowVM : ViewModelBase
+    public class NetworkScannerVM : ViewModelBase
     {
         private ILiveDevice? selectedDevice;
         public ILiveDevice? SelectedDevice
@@ -23,7 +23,7 @@ namespace ViewModel
                 }
             }
         }
-        public MainWindowVM()
+        public NetworkScannerVM()
         {
             StartBtn = new Command(Start, CanStart);
 

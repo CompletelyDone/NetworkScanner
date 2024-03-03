@@ -11,7 +11,6 @@ namespace NetworkScanner.Model.Models
         public string? MacAddress { get; set; }
         public string? NetworkInterfaceVendor {  get; set; }
         [Required] public int TotalPackets { get; set; } = 0;
-        public event HostHandler? Notify;
         #endregion
 
         #region CTOR
@@ -19,8 +18,6 @@ namespace NetworkScanner.Model.Models
         {
             Id = guid;
             IPAddress = iPAddress;
-            Notify += ShowOutput;
-            Notify?.Invoke(iPAddress.ToString());
         }
         #endregion
 

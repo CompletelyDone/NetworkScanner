@@ -1,0 +1,54 @@
+﻿<Window x:Class="View.Windows.ArpScanner"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:View.Windows"
+        mc:Ignorable="d"
+        Title="ArpScanner" Height="500" Width="300"
+        ResizeMode="NoResize">
+    <Grid>
+        <!--Definitions-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="75"/>
+        </Grid.RowDefinitions>
+        
+        <!--Label-->
+        <Label Content="ARP Сканер" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0"/>
+
+        <!--Device Info-->
+        <Label Content="Выбранное устройство: " Grid.Row="1"/>
+
+        <!--Information Panel-->
+        <DataGrid Grid.Row="2" GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True" Header="IP"/>
+                <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <!--Device-->
+        <Button Grid.Row="3" Content="Выбор устройства"/>
+
+        <!--Control Buttons-->
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Добавить адреса"/>
+            <Button Grid.Column="1">
+                <TextBlock>
+                    Начать<LineBreak/>Сканирование
+                </TextBlock>
+            </Button>
+            <Button Grid.Column="2" Content="Выйти"/>
+        </Grid>
+    </Grid>
+</Window>

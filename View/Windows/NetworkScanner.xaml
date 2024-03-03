@@ -1,29 +1,29 @@
-﻿<Window x:Class="View.Windows.ReportWindow"
+﻿<Window x:Class="View.Windows.NetworkScanner"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.Windows"
         mc:Ignorable="d"
-        Title="NetworkScanner" Height="500" Width="800">
+        Title="NetworkScanner" Height="600" Width="400">
     <Grid>
+        <!--Definitions-->
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="*" MinHeight="300"/>
-            <RowDefinition Height="*" MinHeight="150"/>
+            <RowDefinition MinHeight="250" Height="350"/>
+            <RowDefinition MinHeight="150"/>
         </Grid.RowDefinitions>
 
         <!--Menu Panel-->
-        <Menu Grid.Row="0"
-              Height="25">
+        <Menu Grid.Row="0" Height="25">
             <MenuItem Height="25" Header="Файл"/>
             <MenuItem Height="25" Header="Выбор сетевого устройства"/>
             <MenuItem Height="25" Header="Выход"/>
         </Menu>
 
-        <!--Control Keys-->
+        <!--Control Buttons-->
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10 0 0 0">
             <Button Margin="0 0 10 0">
                 <Image Source="../Assets/Start.png"/>
@@ -46,26 +46,22 @@
         <StackPanel Orientation="Horizontal" Grid.Row="2">
             <Label Content="Фильтр"/>
             <TextBox Width="150" Background="BlanchedAlmond"/>
+            <CheckBox Content="Localhost" VerticalAlignment="Center"/>
         </StackPanel>
-        
+
         <!--Information Panel-->
         <DataGrid Grid.Row="3" 
-                  GridLinesVisibility="Horizontal">
+          GridLinesVisibility="Horizontal">
             <DataGrid.Columns>
-                <DataGridTextColumn IsReadOnly="True" Visibility="Collapsed" Header="Id"/>
-                <DataGridTextColumn IsReadOnly="True" Header="IP Отправителя"/>
-                <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес Отправителя"/>
-                <DataGridTextColumn IsReadOnly="True" Header="IP Получателя"/>
-                <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес Получателя"/>
-                <DataGridTextColumn IsReadOnly="True" Header="Протокол"/>
+                <DataGridTextColumn IsReadOnly="True" Header="IP"/>
+                <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Информация"/>
             </DataGrid.Columns>
         </DataGrid>
-        
+
         <!--Detail Information-->
         <DockPanel Grid.Row="4">
-            <TextBlock DockPanel.Dock="Top" Text="Содержание сетевого пакета"/>
-            <TextBlock DockPanel.Dock="Top" Text="0000  bc 76 80 23 ab 02 34 bb  bc 76 80 23 ab 02 34 bb"/>
+            <TextBlock DockPanel.Dock="Top" Text="Подробная информация"/>
         </DockPanel>
     </Grid>
 </Window>

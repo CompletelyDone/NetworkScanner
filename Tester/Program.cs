@@ -1,11 +1,6 @@
-﻿using NetworkScanner.Model;
-using NetworkScanner.Model.Models;
+﻿using NetworkScanner.Model.Models;
 using NetworkScanner.Model.Utils;
 using System.Collections.Concurrent;
-
-//DictionaryOfMACbyVendors macbyVendors = new DictionaryOfMACbyVendors();
-//Console.WriteLine(await macbyVendors.CompareMacAsync("74563C6209B6"));
-
 
 var devs = DeviceScanner.Scan();
 ConcurrentBag<Host> hosts = new ConcurrentBag<Host>();

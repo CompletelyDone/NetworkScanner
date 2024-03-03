@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace View.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для ReportWindow.xaml
+    /// Логика взаимодействия для NetworkScanner.xaml
     /// </summary>
-    public partial class ReportWindow : Window
+    public partial class NetworkScanner : Window
     {
-        public ReportWindow()
+        public NetworkScanner()
         {
             InitializeComponent();
         }
