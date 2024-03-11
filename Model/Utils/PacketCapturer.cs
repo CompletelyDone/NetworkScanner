@@ -27,7 +27,6 @@ namespace NetworkScanner.Model.Utils
             device.OnPacketArrival += new PacketArrivalEventHandler(ReceivePacketHandler);
             Task.Run(() =>
             {
-                Console.WriteLine("Thread:" + Thread.CurrentThread.ManagedThreadId);
                 device.Open(DeviceModes.Promiscuous, 1000);
                 device.StartCapture();
                 while (!cnclToken.IsCancellationRequested)
@@ -44,7 +43,7 @@ namespace NetworkScanner.Model.Utils
             packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
             NetworkInterfaceComparerWithVendor macbyVendors = new NetworkInterfaceComparerWithVendor();
-            var passiveAnalyzer = new PassiveAnalyzer(hosts, packet, macbyVendors);
+            var passiveAnalyzer = new PassiveAnalyzer(device, hosts, packet, macbyVendors);
             passiveAnalyzer.StartAnalyze();
         }
     }

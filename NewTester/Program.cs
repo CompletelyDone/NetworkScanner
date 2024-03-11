@@ -9,18 +9,26 @@ Console.WriteLine(physicalAddress);
 */
 
 var devs = DeviceScanner.Scan();
+var device = devs[0];
 
 
-Console.WriteLine(devs[0].GetIPAdress());
-Console.WriteLine(devs[0].GetSubnetMask());
+Console.WriteLine(device.GetIPAdress());
+Console.WriteLine(device.GetSubnetMask());
 
 NetworkInterfaceComparerWithVendor vendor = new NetworkInterfaceComparerWithVendor();
 
-var hosts = ARPScanner.Scan(devs[0], vendor);
+var hosts = ARPScanner.Scan(device, vendor);
 
 foreach (var host in hosts)
 {
-    Console.WriteLine(host);
+    if(host.IsLocal)
+    {
+        Console.WriteLine($"LOCAL: {host}");
+    }
+    else
+    {
+        Console.WriteLine(host);
+    }
 }
 
 Console.WriteLine("Finish");

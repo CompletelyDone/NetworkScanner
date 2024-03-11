@@ -39,7 +39,12 @@ namespace NetworkScanner.Model.Utils
                     if (MAC != null)
                     {
                         var vendor = await comparer.CompareMacAsync(MAC.ToString());
-                        Host host = new Host(Guid.NewGuid(), newIp) { MacAddress = MAC, NetworkInterfaceVendor = vendor};
+                        Host host = new Host(Guid.NewGuid(), newIp) 
+                        { 
+                            MacAddress = MAC, 
+                            NetworkInterfaceVendor = vendor,
+                            IsLocal = newIp.IsLocalWithDevice(device)
+                        };
                         hostList.Add(host);
                     }
                 });

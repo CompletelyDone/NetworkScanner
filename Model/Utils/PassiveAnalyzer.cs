@@ -1,13 +1,15 @@
-﻿using NetworkScanner.Model.Models;
+﻿using NetworkScanner.Model.Extensions;
+using NetworkScanner.Model.Models;
 using PacketDotNet;
+using SharpPcap;
 using System.Collections.Concurrent;
-using System.Net.NetworkInformation;
 
 namespace NetworkScanner.Model.Utils
 {
     public class PassiveAnalyzer
     {
         #region Fields And Props
+        private ILiveDevice device;
         private EthernetPacket? ethernetPacket;
         private IPPacket? ipPacket;
         private TcpPacket? tcpPacket;
@@ -19,8 +21,9 @@ namespace NetworkScanner.Model.Utils
         #endregion
 
         #region CTOR
-        public PassiveAnalyzer(ConcurrentBag<Host> hosts, Packet packet, NetworkInterfaceComparerWithVendor macbyVendors)
+        public PassiveAnalyzer(ILiveDevice device, ConcurrentBag<Host> hosts, Packet packet, NetworkInterfaceComparerWithVendor macbyVendors)
         {
+            this.device = device;
             this.macbyVendors = macbyVendors;
             this.hosts = hosts;
 
@@ -50,7 +53,7 @@ namespace NetworkScanner.Model.Utils
         {
             Host? hostSource = GetHostSource();
             Host? hostDest = GetHostDest();
-            if(hostSource != null && hostDest != null)
+            if (hostSource != null && hostDest != null)
             {
                 await Task.Run(async () =>
                 {
@@ -75,19 +78,25 @@ namespace NetworkScanner.Model.Utils
                 hostSource = hosts.Where(x => x.IPAddress.ToString() == ipPacket.SourceAddress.ToString()).FirstOrDefault();
                 if (hostSource == null)
                 {
-                    hostSource = new Host(Guid.NewGuid(), ipPacket.SourceAddress);
-                    hostSource.MacAddress = ethernetPacket.SourceHardwareAddress;
+                    hostSource = new Host(Guid.NewGuid(), ipPacket.SourceAddress)
+                    {
+                        MacAddress = ethernetPacket.SourceHardwareAddress,
+                        IsLocal = ipPacket.SourceAddress.IsLocalWithDevice(device)
+                    };
                     hosts.Add(hostSource);
                 }
                 hostSource.TotalPackets += 1;
             }
-            if(arpPacket != null)
+            if (arpPacket != null)
             {
                 hostSource = hosts.Where(x => x.IPAddress.ToString() == arpPacket.SenderProtocolAddress.ToString()).FirstOrDefault();
                 if (hostSource == null)
                 {
-                    hostSource = new Host(Guid.NewGuid(), arpPacket.SenderProtocolAddress);
-                    hostSource.MacAddress = arpPacket.SenderHardwareAddress;
+                    hostSource = new Host(Guid.NewGuid(), arpPacket.SenderProtocolAddress)
+                    {
+                        MacAddress = arpPacket.SenderHardwareAddress,
+                        IsLocal = arpPacket.SenderProtocolAddress.IsLocalWithDevice(device)
+                    };
                     hosts.Add(hostSource);
                 }
                 hostSource.TotalPackets += 1;
@@ -102,8 +111,11 @@ namespace NetworkScanner.Model.Utils
                 hostDest = hosts.Where(x => x.IPAddress.ToString() == ipPacket.DestinationAddress.ToString()).FirstOrDefault();
                 if (hostDest == null)
                 {
-                    hostDest = new Host(Guid.NewGuid(), ipPacket.DestinationAddress);
-                    hostDest.MacAddress = ethernetPacket.DestinationHardwareAddress;
+                    hostDest = new Host(Guid.NewGuid(), ipPacket.DestinationAddress)
+                    {
+                        MacAddress = ethernetPacket.DestinationHardwareAddress,
+                        IsLocal = ipPacket.DestinationAddress.IsLocalWithDevice(device)
+                    };
                     hosts.Add(hostDest);
                 }
                 hostDest.TotalPackets += 1;
@@ -113,8 +125,11 @@ namespace NetworkScanner.Model.Utils
                 hostDest = hosts.Where(x => x.IPAddress.ToString() == arpPacket.TargetProtocolAddress.ToString()).FirstOrDefault();
                 if (hostDest == null)
                 {
-                    hostDest = new Host(Guid.NewGuid(), arpPacket.TargetProtocolAddress);
-                    hostDest.MacAddress = arpPacket.TargetHardwareAddress;
+                    hostDest = new Host(Guid.NewGuid(), arpPacket.TargetProtocolAddress)
+                    {
+                        MacAddress = arpPacket.TargetHardwareAddress,
+                        IsLocal = arpPacket.TargetProtocolAddress.IsLocalWithDevice(device)
+                    };
                     hosts.Add(hostDest);
                 }
                 hostDest.TotalPackets += 1;

@@ -19,13 +19,15 @@ Console.ReadLine();
 cts.Cancel();
 Console.WriteLine("Должно выключиться");
 
-foreach (var host in hosts)
+foreach (var host in hosts.OrderByDescending(x=>x.IsLocal).ThenByDescending(x=>x.TotalPackets))
 {
     Console.WriteLine(host);
 }
 
+cts.Dispose();
 Console.ReadLine();
 
+Console.WriteLine("Заново");
 cts = new CancellationTokenSource();
 ct = cts.Token;
 
@@ -37,4 +39,11 @@ Console.WriteLine("Нажми для выключения");
 Console.ReadLine();
 cts.Cancel();
 Console.WriteLine("Должно выключиться");
+
+foreach (var host in hosts.OrderByDescending(x => x.IsLocal).ThenByDescending(x => x.TotalPackets))
+{
+    Console.WriteLine(host);
+}
+
+cts.Dispose();
 Console.ReadLine();
