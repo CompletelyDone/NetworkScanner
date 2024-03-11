@@ -10,8 +10,10 @@ namespace NetworkScanner.Model.Models
         public IPAddress IPAddress { get; set; }
         public PhysicalAddress? MacAddress { get; set; }
 
-        public string? NetworkInterfaceVendor {  get; set; }
+        public string? NetworkInterfaceVendor { get; set; }
         public bool IsLocal { get; set; } = false;
+
+        public List<Port> Ports { get; set; } = new List<Port>();
 
         public int TotalPackets { get; set; } = 0;
         #endregion
@@ -26,7 +28,16 @@ namespace NetworkScanner.Model.Models
 
         public override string ToString()
         {
-            string returning = $"Local:{IsLocal} MAC: {MacAddress}. IP: {IPAddress}. Network Interface Vendor: {NetworkInterfaceVendor}. Total Packets: {TotalPackets}";
+            string returning = $"Local:{IsLocal}. IP: {IPAddress}. Network Interface Vendor: {NetworkInterfaceVendor}. Total Packets: {TotalPackets}.";
+            if (Ports.Count > 0)
+            {
+                returning += "\nPorts: ";
+
+                foreach (Port port in Ports)
+                {
+                    returning += $"\n   Number: {port.Number}, Protocol: {port.Protocol}";
+                }
+            }
             return returning;
         }
     }

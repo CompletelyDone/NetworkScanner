@@ -85,6 +85,24 @@ namespace NetworkScanner.Model.Utils
                     };
                     hosts.Add(hostSource);
                 }
+
+                if (tcpPacket != null)
+                {
+                    Port port = new Port(tcpPacket.SourcePort, "TCP/IP", hostSource);
+                    if (!hostSource.Ports.Contains(port))
+                    {
+                        hostSource.Ports.Add(port);
+                    }
+                }
+                if(udpPacket != null)
+                {
+                    Port port = new Port(udpPacket.SourcePort, "UDP/IP", hostSource);
+                    if (!hostSource.Ports.Contains(port))
+                    {
+                        hostSource.Ports.Add(port);
+                    }
+                }
+
                 hostSource.TotalPackets += 1;
             }
             if (arpPacket != null)
@@ -118,6 +136,24 @@ namespace NetworkScanner.Model.Utils
                     };
                     hosts.Add(hostDest);
                 }
+
+                if (tcpPacket != null)
+                {
+                    Port port = new Port(tcpPacket.DestinationPort, "TCP/IP", hostDest);
+                    if(!hostDest.Ports.Contains(port))
+                    {
+                        hostDest.Ports.Add(port);
+                    }
+                }
+                if (udpPacket != null)
+                {
+                    Port port = new Port(udpPacket.DestinationPort, "UDP/IP", hostDest);
+                    if (!hostDest.Ports.Contains(port))
+                    {
+                        hostDest.Ports.Add(port);
+                    }
+                }
+
                 hostDest.TotalPackets += 1;
             }
             if (arpPacket != null)

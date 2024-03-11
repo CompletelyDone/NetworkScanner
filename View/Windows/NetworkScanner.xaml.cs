@@ -1,4 +1,5 @@
 ﻿using NetworkScanner.Model.Models;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -17,7 +18,10 @@ namespace View.Windows
 
         public void ReceiveHosts(List<Host> hosts)
         {
-
+            foreach (Host host in hosts)
+            {
+                Console.WriteLine(host);
+            }
         }
     }
 }

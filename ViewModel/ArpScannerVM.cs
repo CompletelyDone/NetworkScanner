@@ -24,6 +24,22 @@ namespace ViewModel
             });
         }
 
+        private ObservableCollection<Host> hosts = new ObservableCollection<Host>();
+        public ObservableCollection<Host> Hosts
+        {
+            get
+            {
+                return hosts;
+            }
+            private set
+            {
+                hosts = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #region StartScanButton
+        public Command StartScan { get; private set; }
         private bool canStartScanning = true;
         public bool CanStartScanning
         {
@@ -34,21 +50,6 @@ namespace ViewModel
             private set
             {
                 canStartScanning = value;
-                OnPropertyChanged();
-            }
-        }
-        public Command StartScan { get; private set; }
-
-        private ObservableCollection<Host> hosts = new ObservableCollection<Host>();
-        public ObservableCollection<Host> Hosts
-        {
-            get
-            {
-                return hosts;
-            }
-            set
-            {
-                hosts = value;
                 OnPropertyChanged();
             }
         }
@@ -69,11 +70,11 @@ namespace ViewModel
 
             CanStartScanning = true;
         }
-
         private void OnHostCreated(object? sender, HostEventArgs args)
         {
             Host host = args.Host;
             dispatcher.Invoke(() => Hosts.Add(host));
         }
+        #endregion
     }
 }
