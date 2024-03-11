@@ -1,5 +1,6 @@
-﻿using System.Windows;
-using ViewModel;
+﻿using NetworkScanner.Model.Models;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace View.Windows
 {
@@ -12,6 +13,11 @@ namespace View.Windows
         {
             InitializeComponent();
             //this.DataContext = new NetworkScannerVM();
+        }
+
+        public void ReceiveHosts(List<Host> hosts)
+        {
+
         }
     }
 }

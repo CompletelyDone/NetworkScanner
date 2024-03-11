@@ -35,7 +35,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Content="Добавить адреса"/>
+            <Button Grid.Column="0" Content="Добавить адреса" Click="AddHostsToParentWindow"/>
             <Button Grid.Column="1" Command="{Binding StartScan}" IsEnabled="{Binding CanStartScanning}">
                 <TextBlock>
                     Начать<LineBreak/>Сканирование
