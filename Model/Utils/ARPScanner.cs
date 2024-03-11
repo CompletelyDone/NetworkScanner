@@ -1,7 +1,6 @@
 ﻿using NetworkScanner.Model.Extensions;
 using NetworkScanner.Model.Models;
 using SharpPcap;
-using System.Collections.Concurrent;
 using System.Net;
 using System.Net.NetworkInformation;
 
@@ -9,10 +8,10 @@ namespace NetworkScanner.Model.Utils
 {
     public static class ARPScanner
     {
-        public static List<Host> Scan(ILiveDevice device, NetworkInterfaceComparerWithVendor comparer)
-        {
-            var hostList = new ConcurrentBag<Host>();
+        public static event EventHandler<HostEventArgs>? HostCreated;
 
+        public static void Scan(ILiveDevice device, NetworkInterfaceComparerWithVendor comparer)
+        {
             var localIP = device.GetIPAdress().ToString();
             var mask = device.GetSubnetMask().ToString();
 
@@ -45,12 +44,10 @@ namespace NetworkScanner.Model.Utils
                             NetworkInterfaceVendor = vendor,
                             IsLocal = newIp.IsLocalWithDevice(device)
                         };
-                        hostList.Add(host);
+                        OnHostCreated(host);
                     }
                 });
             }
-
-            return hostList.ToList();
         }
 
         private static IEnumerable<string> GetIpAddressesInRange(int[] startIpParts, int[] endIpParts)
@@ -121,6 +118,16 @@ namespace NetworkScanner.Model.Utils
             }
 
             return null;
+        }
+
+        private static void OnHostCreated(Host host)
+        {
+            if(HostCreated != null)
+            {
+                HostEventArgs args = new HostEventArgs(host);
+
+                HostCreated.Invoke(null, args);
+            }
         }
     }
 }

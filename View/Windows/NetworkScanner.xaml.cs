@@ -11,7 +11,7 @@ namespace View.Windows
         public NetworkScanner()
         {
             InitializeComponent();
-            this.DataContext = new NetworkScannerVM();
+            //this.DataContext = new NetworkScannerVM();
         }
     }
 }

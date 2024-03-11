@@ -1,5 +1,6 @@
 ﻿using NetworkScanner.Model.Models;
 using NetworkScanner.Model.Utils;
+using NetworkScanner.ViewModel.Interfaces;
 using SharpPcap;
 using System.Collections.ObjectModel;
 using ViewModel.Base;
@@ -10,12 +11,13 @@ namespace ViewModel
     {
         private readonly ILiveDevice device;
         private readonly NetworkInterfaceComparerWithVendor comparerVendor;
+        private readonly IDispatcherFix dispatcher;
 
-        public ArpScannerVM(ILiveDevice _device, NetworkInterfaceComparerWithVendor _comparerVendor)
+        public ArpScannerVM(ILiveDevice _device, NetworkInterfaceComparerWithVendor _comparerVendor, IDispatcherFix dispatcher)
         {
             device = _device;
             comparerVendor = _comparerVendor;
-
+            this.dispatcher = dispatcher;
             StartScan = new Command(ScanAsync, () =>
             {
                 return CanStartScanning;
@@ -54,19 +56,24 @@ namespace ViewModel
         private async void ScanAsync()
         {
             CanStartScanning = false;
+            Hosts.Clear();
 
-            List<Host> hostList = new List<Host>();
+            ARPScanner.HostCreated += OnHostCreated;
             await Task.Run(() =>
             {
-                hostList = ARPScanner.Scan(device, comparerVendor);
+                ARPScanner.Scan(device, comparerVendor);
             });
-            
-            foreach (var host in hostList)
-            {
-                Hosts.Add(host);
-            }
+            ARPScanner.HostCreated -= OnHostCreated;
+            var sortedHosts = Hosts.OrderBy(x => x.IPAddress.ToString());
+            Hosts = new ObservableCollection<Host>(sortedHosts);
 
             CanStartScanning = true;
+        }
+
+        private void OnHostCreated(object? sender, HostEventArgs args)
+        {
+            Host host = args.Host;
+            dispatcher.Invoke(() => Hosts.Add(host));
         }
     }
 }
