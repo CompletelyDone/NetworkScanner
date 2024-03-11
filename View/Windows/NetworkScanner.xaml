@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.Windows"
         mc:Ignorable="d"
-        Title="NetworkScanner" Height="600" Width="400">
+        Title="NetworkScanner" Height="600" Width="400"
+        MinHeight="600" MinWidth="400">
     <Grid>
         <!--Definitions-->
         <Grid.RowDefinitions>

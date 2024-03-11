@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NetworkScanner.Model.Utils;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using ViewModel;
 
 namespace View.Windows
 {
@@ -22,6 +12,19 @@ namespace View.Windows
         public ArpScanner()
         {
             InitializeComponent();
+
+            //Исправить DEBUG версия
+            var devs = DeviceScanner.Scan();
+            var comparer = new NetworkInterfaceComparerWithVendor();
+
+            //Исправить DEBUG версия
+
+            this.DataContext = new ArpScannerVM(devs[0], comparer);
+        }
+
+        public void OnExitButtonPressed(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

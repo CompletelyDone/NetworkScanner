@@ -14,12 +14,12 @@ namespace NetworkScanner.Model.Utils
         private UdpPacket? udpPacket;
         private ArpPacket? arpPacket;
         private IcmpV4Packet? icmpV4Packet;
-        private DictionaryOfMACbyVendors macbyVendors;
+        private NetworkInterfaceComparerWithVendor macbyVendors;
         private ConcurrentBag<Host> hosts;
         #endregion
 
         #region CTOR
-        public PassiveAnalyzer(ConcurrentBag<Host> hosts, Packet packet, DictionaryOfMACbyVendors macbyVendors)
+        public PassiveAnalyzer(ConcurrentBag<Host> hosts, Packet packet, NetworkInterfaceComparerWithVendor macbyVendors)
         {
             this.macbyVendors = macbyVendors;
             this.hosts = hosts;
@@ -76,7 +76,7 @@ namespace NetworkScanner.Model.Utils
                 if (hostSource == null)
                 {
                     hostSource = new Host(Guid.NewGuid(), ipPacket.SourceAddress);
-                    hostSource.MacAddress = ethernetPacket.SourceHardwareAddress.ToString();
+                    hostSource.MacAddress = ethernetPacket.SourceHardwareAddress;
                     hosts.Add(hostSource);
                 }
                 hostSource.TotalPackets += 1;
@@ -87,7 +87,7 @@ namespace NetworkScanner.Model.Utils
                 if (hostSource == null)
                 {
                     hostSource = new Host(Guid.NewGuid(), arpPacket.SenderProtocolAddress);
-                    hostSource.MacAddress = arpPacket.SenderHardwareAddress.ToString();
+                    hostSource.MacAddress = arpPacket.SenderHardwareAddress;
                     hosts.Add(hostSource);
                 }
                 hostSource.TotalPackets += 1;
@@ -103,7 +103,7 @@ namespace NetworkScanner.Model.Utils
                 if (hostDest == null)
                 {
                     hostDest = new Host(Guid.NewGuid(), ipPacket.DestinationAddress);
-                    hostDest.MacAddress = ethernetPacket.DestinationHardwareAddress.ToString();
+                    hostDest.MacAddress = ethernetPacket.DestinationHardwareAddress;
                     hosts.Add(hostDest);
                 }
                 hostDest.TotalPackets += 1;
@@ -114,7 +114,7 @@ namespace NetworkScanner.Model.Utils
                 if (hostDest == null)
                 {
                     hostDest = new Host(Guid.NewGuid(), arpPacket.TargetProtocolAddress);
-                    hostDest.MacAddress = arpPacket.TargetHardwareAddress.ToString();
+                    hostDest.MacAddress = arpPacket.TargetHardwareAddress;
                     hosts.Add(hostDest);
                 }
                 hostDest.TotalPackets += 1;

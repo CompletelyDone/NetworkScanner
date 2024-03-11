@@ -1,4 +1,6 @@
-﻿using NetworkScanner.Model.Models;
+﻿using NetworkScanner.Model.Extensions;
+using NetworkScanner.Model.Models;
+using SharpPcap;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -7,14 +9,12 @@ namespace NetworkScanner.Model.Utils
 {
     public static class ARPScanner
     {
-        public static List<Host> Scan(PhysicalAddress macAddress)
+        public static List<Host> Scan(ILiveDevice device, NetworkInterfaceComparerWithVendor comparer)
         {
             var hostList = new ConcurrentBag<Host>();
 
-            var ipAndMask = GetIPAddressAndSubnetMaskByMAC(macAddress);
-
-            var localIP = ipAndMask.ip;
-            var mask = ipAndMask.mask;
+            var localIP = device.GetIPAdress().ToString();
+            var mask = device.GetSubnetMask().ToString();
 
             if (localIP != null && mask != null)
             {
@@ -30,16 +30,17 @@ namespace NetworkScanner.Model.Utils
                     endIpParts[i] = startIpParts[i] | ~int.Parse(maskParts[i]) & 255;
                 }
 
-                Parallel.ForEach(GetIpAddressesInRange(startIpParts, endIpParts), ipAddress =>
+                Parallel.ForEach(GetIpAddressesInRange(startIpParts, endIpParts), async ipAddress =>
                 {
-                    string MAC = GetMacAddress(ipAddress);
+                    PhysicalAddress MAC = GetMacAddress(ipAddress);
 
                     var newIp = IPAddress.Parse(ipAddress);
 
                     if (MAC != null)
                     {
-                        Host newHost = new Host(Guid.NewGuid(), newIp) { MacAddress = MAC };
-                        hostList.Add(newHost);
+                        var vendor = await comparer.CompareMacAsync(MAC.ToString());
+                        Host host = new Host(Guid.NewGuid(), newIp) { MacAddress = MAC, NetworkInterfaceVendor = vendor};
+                        hostList.Add(host);
                     }
                 });
             }
@@ -64,39 +65,15 @@ namespace NetworkScanner.Model.Utils
             }
         }
 
-        private static (string? ip, string? mask) GetIPAddressAndSubnetMaskByMAC(PhysicalAddress macAddress)
-        {
-            NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
-
-            foreach (NetworkInterface netInterface in interfaces)
-            {
-                PhysicalAddress physicalAddress = netInterface.GetPhysicalAddress();
-
-                if (physicalAddress.ToString() == macAddress.ToString())
-                {
-                    IPInterfaceProperties properties = netInterface.GetIPProperties();
-                    foreach (UnicastIPAddressInformation ipAddress in properties.UnicastAddresses)
-                    {
-                        if (ipAddress.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            return (ipAddress.Address.ToString(), ipAddress.IPv4Mask.ToString());
-                        }
-                    }
-                }
-            }
-
-            return (null, null);
-        }
-
-        private static string? GetMacAddress(string ip)
+        private static PhysicalAddress GetMacAddress(string ip)
         {
             IPAddress targetIp = IPAddress.Parse(ip);
 
             using (Ping ping = new Ping())
             {
-                int timeout = 3000;
+                int timeout = 10;
 
-                PingReply reply = ping.Send(targetIp, timeout);
+                var reply = ping.Send(targetIp, timeout);
 
                 if (reply.Status == IPStatus.Success)
                 {
@@ -104,7 +81,7 @@ namespace NetworkScanner.Model.Utils
 
                     if (macAddress != null)
                     {
-                        return macAddress.ToString();
+                        return macAddress;
                     }
                 }
             }

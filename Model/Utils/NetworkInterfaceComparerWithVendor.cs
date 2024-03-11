@@ -2,10 +2,10 @@
 
 namespace NetworkScanner.Model.Utils
 {
-    public class DictionaryOfMACbyVendors
+    public class NetworkInterfaceComparerWithVendor
     {
         private readonly Dictionary<string, string> macByVendors;
-        public DictionaryOfMACbyVendors()
+        public NetworkInterfaceComparerWithVendor()
         {
             macByVendors = new Dictionary<string, string>();
             XDocument doc = XDocument.Load("D:\\Diplom\\NetworkScanner\\Model\\Assets\\vendorMacs.xml");   
@@ -21,9 +21,9 @@ namespace NetworkScanner.Model.Utils
             }
         }
         
-        public async Task<String> CompareMacAsync(string macAddress)
+        public async Task<string> CompareMacAsync(string macAddress)
         {
-            String str = "Unidentified";
+            string str = "Unidentified";
             await Task.Run(() =>
             {
                 foreach (var mac in macByVendors)

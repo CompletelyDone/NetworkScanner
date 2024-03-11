@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Net.NetworkInformation;
 
 namespace NetworkScanner.Model.Models
 {
@@ -8,7 +9,7 @@ namespace NetworkScanner.Model.Models
         #region Fields and Props
         [Required] public Guid Id { get; set; }
         [Required] public IPAddress IPAddress { get; set; }
-        public string? MacAddress { get; set; }
+        public PhysicalAddress? MacAddress { get; set; }
         public string? NetworkInterfaceVendor {  get; set; }
         [Required] public int TotalPackets { get; set; } = 0;
         #endregion
@@ -21,14 +22,9 @@ namespace NetworkScanner.Model.Models
         }
         #endregion
 
-        private void ShowOutput(string message)
-        {
-            Console.WriteLine(message);
-        }
-
         public override string ToString()
         {
-            string returning = $"MAC: {MacAddress}. IP: {IPAddress}. Network Interface Vendor: {NetworkInterfaceVendor}. Total Packets: {TotalPackets}";
+            string returning = $"MAC: {MacAddress.ToString()}. IP: {IPAddress}. Network Interface Vendor: {NetworkInterfaceVendor}. Total Packets: {TotalPackets}";
             return returning;
         }
     }

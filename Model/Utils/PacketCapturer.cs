@@ -43,7 +43,7 @@ namespace NetworkScanner.Model.Utils
             var rawPacket = e.GetPacket();
             packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
-            DictionaryOfMACbyVendors macbyVendors = new DictionaryOfMACbyVendors();
+            NetworkInterfaceComparerWithVendor macbyVendors = new NetworkInterfaceComparerWithVendor();
             var passiveAnalyzer = new PassiveAnalyzer(hosts, packet, macbyVendors);
             passiveAnalyzer.StartAnalyze();
         }

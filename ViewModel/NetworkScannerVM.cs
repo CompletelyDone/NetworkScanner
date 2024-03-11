@@ -1,6 +1,5 @@
 ﻿using NetworkScanner.Model.Utils;
 using SharpPcap;
-using System.Diagnostics;
 using ViewModel.Base;
 
 namespace ViewModel
