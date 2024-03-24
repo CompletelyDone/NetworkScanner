@@ -3,6 +3,7 @@ using NetworkScanner.Model.Models;
 using PacketDotNet;
 using SharpPcap;
 using System.Collections.Concurrent;
+using System.Text;
 
 namespace NetworkScanner.Model.Utils
 {
@@ -88,13 +89,34 @@ namespace NetworkScanner.Model.Utils
 
                 if (tcpPacket != null)
                 {
+                    byte[] payloadData = tcpPacket.PayloadData;
+
+                    if (payloadData.Length >= 4)
+                    {
+                        string text = Encoding.ASCII.GetString(payloadData);
+                        int index = text.IndexOf("User-Agent");
+                        if (index != -1)
+                        {
+                            int startIndex = text.LastIndexOf(Environment.NewLine, index) + Environment.NewLine.Length;
+                            int endIndex = text.IndexOf(Environment.NewLine, index);
+                            if (endIndex == -1)
+                            {
+                                endIndex = text.Length;
+                            }
+                            string userAgentLine = text.Substring(startIndex + 12, endIndex - startIndex - 12);
+                            hostSource.UserAgent = userAgentLine;
+                        }
+                    }
+
+
                     Port port = new Port(tcpPacket.SourcePort, "TCP/IP", hostSource);
                     if (!hostSource.Ports.Contains(port))
                     {
                         hostSource.Ports.Add(port);
                     }
                 }
-                if(udpPacket != null)
+
+                if (udpPacket != null)
                 {
                     Port port = new Port(udpPacket.SourcePort, "UDP/IP", hostSource);
                     if (!hostSource.Ports.Contains(port))
@@ -103,7 +125,7 @@ namespace NetworkScanner.Model.Utils
                     }
                 }
 
-                hostSource.TotalPackets += 1;
+                hostSource.PacketsSend += 1;
             }
             if (arpPacket != null)
             {
@@ -117,7 +139,7 @@ namespace NetworkScanner.Model.Utils
                     };
                     hosts.Add(hostSource);
                 }
-                hostSource.TotalPackets += 1;
+                hostSource.PacketsSend += 1;
             }
             return hostSource;
         }
@@ -140,7 +162,7 @@ namespace NetworkScanner.Model.Utils
                 if (tcpPacket != null)
                 {
                     Port port = new Port(tcpPacket.DestinationPort, "TCP/IP", hostDest);
-                    if(!hostDest.Ports.Contains(port))
+                    if (!hostDest.Ports.Contains(port))
                     {
                         hostDest.Ports.Add(port);
                     }
@@ -154,7 +176,7 @@ namespace NetworkScanner.Model.Utils
                     }
                 }
 
-                hostDest.TotalPackets += 1;
+                hostDest.PacketsReceived += 1;
             }
             if (arpPacket != null)
             {
@@ -168,7 +190,7 @@ namespace NetworkScanner.Model.Utils
                     };
                     hosts.Add(hostDest);
                 }
-                hostDest.TotalPackets += 1;
+                hostDest.PacketsReceived += 1;
             }
             return hostDest;
         }

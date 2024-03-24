@@ -10,7 +10,7 @@ namespace NetworkScanner.Model.Utils
     {
         public static event EventHandler<HostEventArgs>? HostCreated;
 
-        public static void Scan(ILiveDevice device, NetworkInterfaceComparerWithVendor comparer)
+        public static async Task Scan(ILiveDevice device, NetworkInterfaceComparerWithVendor comparer)
         {
             var localIP = device.GetIPAdress().ToString();
             var mask = device.GetSubnetMask().ToString();
@@ -29,24 +29,9 @@ namespace NetworkScanner.Model.Utils
                     endIpParts[i] = startIpParts[i] | ~int.Parse(maskParts[i]) & 255;
                 }
 
-                Parallel.ForEach(GetIpAddressesInRange(startIpParts, endIpParts), async ipAddress =>
-                {
-                    PhysicalAddress MAC = GetMacAddress(ipAddress);
+                Parallel.ForEach(GetIpAddressesInRange(startIpParts, endIpParts),  PingIp);
 
-                    var newIp = IPAddress.Parse(ipAddress);
-
-                    if (MAC != null)
-                    {
-                        var vendor = await comparer.CompareMacAsync(MAC.ToString());
-                        Host host = new Host(Guid.NewGuid(), newIp) 
-                        { 
-                            MacAddress = MAC, 
-                            NetworkInterfaceVendor = vendor,
-                            IsLocal = newIp.IsLocalWithDevice(device)
-                        };
-                        OnHostCreated(host);
-                    }
-                });
+                await GetMacAddressFromArpCache(comparer);
             }
         }
 
@@ -67,33 +52,18 @@ namespace NetworkScanner.Model.Utils
             }
         }
 
-        private static PhysicalAddress GetMacAddress(string ip)
+        private static void PingIp(string ip)
         {
             IPAddress targetIp = IPAddress.Parse(ip);
 
-            using (Ping ping = new Ping())
-            {
-                int timeout = 10;
-
-                var reply = ping.Send(targetIp, timeout);
-
-                if (reply.Status == IPStatus.Success)
-                {
-                    PhysicalAddress macAddress = GetMacAddressFromArpCache(targetIp);
-
-                    if (macAddress != null)
-                    {
-                        return macAddress;
-                    }
-                }
-            }
-
-            return null;
+            using Ping ping = new Ping();
+            int timeout = 40;
+            ping.Send(targetIp, timeout);
         }
 
-        private static PhysicalAddress? GetMacAddressFromArpCache(IPAddress ipAddress)
+        private static async Task GetMacAddressFromArpCache(NetworkInterfaceComparerWithVendor comparer)
         {
-            string arpCommand = $"arp -a {ipAddress}";
+            string arpCommand = $"arp -a";
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             process.StartInfo.FileName = "cmd.exe";
@@ -111,18 +81,26 @@ namespace NetworkScanner.Model.Utils
             {
                 string[] parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (parts.Length >= 3 && parts[0] == ipAddress.ToString())
+                char firstChar = parts[0][0];
+
+                if (parts.Length >= 3 && Char.IsDigit(firstChar))
                 {
-                    return PhysicalAddress.Parse(parts[1]);
+                    IPAddress ip = IPAddress.Parse(parts[0]);
+                    PhysicalAddress mac = PhysicalAddress.Parse(parts[1]);
+                    Host newHost = new Host(Guid.NewGuid(), ip)
+                    {
+                        MacAddress = mac,
+                        NetworkInterfaceVendor = await comparer.CompareMacAsync(mac.ToString()),
+                        IsLocal = true
+                    };
+                    OnHostCreated(newHost);
                 }
             }
-
-            return null;
         }
 
         private static void OnHostCreated(Host host)
         {
-            if(HostCreated != null)
+            if (HostCreated != null)
             {
                 HostEventArgs args = new HostEventArgs(host);
 

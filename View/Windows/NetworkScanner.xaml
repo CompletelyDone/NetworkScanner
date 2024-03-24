@@ -12,7 +12,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="25"/>
             <RowDefinition MinHeight="250" Height="350"/>
             <RowDefinition MinHeight="150"/>
         </Grid.RowDefinitions>
@@ -20,38 +19,19 @@
         <!--Menu Panel-->
         <Menu Grid.Row="0" Height="25">
             <MenuItem Height="25" Header="Файл"/>
-            <MenuItem Height="25" Header="Выбор сетевого устройства"/>
-            <MenuItem Height="25" Header="Выход"/>
+            <MenuItem x:Name="DeviceButton" Height="25" Header="Выбор сетевого устройства"/>
+            <MenuItem Height="25" Header="Выход" Click="OnExitButtonPressed"/>
         </Menu>
 
-        <!--Control Buttons-->
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10 0 0 0">
-            <Button Margin="0 0 10 0">
-                <Image Source="../Assets/Start.png"/>
-            </Button>
-            <Button Margin="0 0 30 0" IsEnabled="False">
-                <Image Source="../Assets/Stop.png"/>
-            </Button>
-            <Button Margin="0 0 10 0">
-                <Image Source="../Assets/Settings.png"/>
-            </Button>
-            <Button Margin="0 0 10 0">
-                <Image Source="../Assets/Info.png"/>
-            </Button>
-            <Button>
-                <Image Source="../Assets/Exit.png"/>
-            </Button>
-        </StackPanel>
-
         <!--Filter-->
-        <StackPanel Orientation="Horizontal" Grid.Row="2">
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Label Content="Фильтр"/>
             <TextBox Width="150" Background="BlanchedAlmond"/>
             <CheckBox Content="Localhost" VerticalAlignment="Center"/>
         </StackPanel>
 
         <!--Information Panel-->
-        <DataGrid Grid.Row="3" 
+        <DataGrid Grid.Row="2" 
           GridLinesVisibility="Horizontal">
             <DataGrid.Columns>
                 <DataGridTextColumn IsReadOnly="True" Header="IP"/>
@@ -61,7 +41,7 @@
         </DataGrid>
 
         <!--Detail Information-->
-        <DockPanel Grid.Row="4">
+        <DockPanel Grid.Row="3">
             <TextBlock DockPanel.Dock="Top" Text="Подробная информация"/>
         </DockPanel>
     </Grid>

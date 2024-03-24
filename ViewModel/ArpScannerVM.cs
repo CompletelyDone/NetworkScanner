@@ -60,9 +60,9 @@ namespace ViewModel
             Hosts.Clear();
 
             ARPScanner.HostCreated += OnHostCreated;
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                ARPScanner.Scan(device, comparerVendor);
+                await ARPScanner.Scan(device, comparerVendor);
             });
             ARPScanner.HostCreated -= OnHostCreated;
             var sortedHosts = Hosts.OrderBy(x => x.IPAddress.ToString());

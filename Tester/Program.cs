@@ -19,7 +19,7 @@ Console.ReadLine();
 cts.Cancel();
 Console.WriteLine("Должно выключиться");
 
-foreach (var host in hosts.OrderByDescending(x=>x.IsLocal).ThenByDescending(x=>x.TotalPackets))
+foreach (var host in hosts.OrderByDescending(x=>x.IsLocal).ThenByDescending(x=>x.PacketsSend))
 {
     Console.WriteLine(host);
 }
@@ -40,7 +40,7 @@ Console.ReadLine();
 cts.Cancel();
 Console.WriteLine("Должно выключиться");
 
-foreach (var host in hosts.OrderByDescending(x => x.IsLocal).ThenByDescending(x => x.TotalPackets))
+foreach (var host in hosts.OrderByDescending(x => x.IsLocal).ThenByDescending(x => x.PacketsSend))
 {
     Console.WriteLine(host);
 }

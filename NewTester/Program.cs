@@ -1,12 +1,7 @@
 ﻿using NetworkScanner.Model.Extensions;
 using NetworkScanner.Model.Utils;
-
-/*
-string str = "12:34:56:12:34:56";
-PhysicalAddress physicalAddress;
-PhysicalAddress.TryParse(str, out physicalAddress);
-Console.WriteLine(physicalAddress);
-*/
+using PacketDotNet;
+using System.Reflection;
 
 var devs = DeviceScanner.Scan();
 var device = devs[0];
@@ -15,21 +10,25 @@ var device = devs[0];
 Console.WriteLine(device.GetIPAdress());
 Console.WriteLine(device.GetSubnetMask());
 
-NetworkInterfaceComparerWithVendor vendor = new NetworkInterfaceComparerWithVendor();
+var myType = typeof(TcpPacket);
 
-var hosts = ARPScanner.Scan(device, vendor);
+Console.WriteLine();
 
-foreach (var host in hosts)
+foreach (PropertyInfo prop in myType.GetProperties(
+    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static))
 {
-    if(host.IsLocal)
-    {
-        Console.WriteLine($"LOCAL: {host}");
-    }
-    else
-    {
-        Console.WriteLine(host);
-    }
+    Console.Write($"{prop.PropertyType} {prop.Name} {{");
+
+    // если свойство доступно для чтения
+    if (prop.CanRead) Console.Write("get;");
+    // если свойство доступно для записи
+    if (prop.CanWrite) Console.Write("set;");
+    Console.WriteLine("}");
 }
+
+Console.WriteLine();
+
+Console.WriteLine(devs.GetType()); 
 
 Console.WriteLine("Finish");
 
