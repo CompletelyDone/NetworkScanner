@@ -1,24 +1,24 @@
 ﻿using NetworkScanner.Model.Models;
 using PacketDotNet;
 using SharpPcap;
-using System.Collections.Concurrent;
 
 namespace NetworkScanner.Model.Utils
 {
     public class PacketCapturer
     {
         #region Fields and Props
-        private ILiveDevice device;
+        private readonly ILiveDevice device;
+
+        private PassiveAnalyzer passiveAnalyzer;
         private Packet? packet;
-        //private PassiveAnalyzer? passiveAnalyzer;
-        private ConcurrentBag<Host> hosts;
         #endregion
 
         #region CTOR
-        public PacketCapturer(ILiveDevice device, ConcurrentBag<Host> hosts)
+        public PacketCapturer(ILiveDevice device, IList<Host> hosts, NetworkInterfaceComparerMacWithVendor comparer)
         {
             this.device = device;
-            this.hosts = hosts;
+
+            passiveAnalyzer = new PassiveAnalyzer(hosts, device, comparer);
         }
         #endregion
 
@@ -42,9 +42,7 @@ namespace NetworkScanner.Model.Utils
             var rawPacket = e.GetPacket();
             packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
-            NetworkInterfaceComparerWithVendor macbyVendors = new NetworkInterfaceComparerWithVendor();
-            var passiveAnalyzer = new PassiveAnalyzer(device, hosts, packet, macbyVendors);
-            passiveAnalyzer.StartAnalyze();
+            passiveAnalyzer.AnalyzePacket(packet);
         }
     }
 }

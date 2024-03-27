@@ -18,8 +18,11 @@ namespace View.Windows
         public NetworkScanner()
         {
             InitializeComponent();
+
             DispatcherFix dispatcher = new DispatcherFix(Application.Current.Dispatcher);
-            this.DataContext = new NetworkScannerVM(dispatcher);
+            ErrorGenerator generator = new ErrorGenerator();
+
+            this.DataContext = new NetworkScannerVM(dispatcher, generator);
             
             ChooseDevice = new Command(ChooseDeviceMethod);
 

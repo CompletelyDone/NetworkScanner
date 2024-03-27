@@ -1,94 +1,136 @@
-﻿using NetworkScanner.Model.Extensions;
-using NetworkScanner.Model.Models;
+﻿using NetworkScanner.Model.Models;
 using PacketDotNet;
 using SharpPcap;
-using System.Collections.Concurrent;
-using System.Text;
+using System.Net.NetworkInformation;
+using System.Net;
+using NetworkScanner.Model.Extensions;
 
 namespace NetworkScanner.Model.Utils
 {
     public class PassiveAnalyzer
     {
         #region Fields And Props
-        private ILiveDevice device;
-        private EthernetPacket? ethernetPacket;
-        private IPPacket? ipPacket;
-        private TcpPacket? tcpPacket;
-        private UdpPacket? udpPacket;
-        private ArpPacket? arpPacket;
-        private IcmpV4Packet? icmpV4Packet;
-        private NetworkInterfaceComparerWithVendor macbyVendors;
-        private ConcurrentBag<Host> hosts;
+        private readonly IList<Host> hosts;
+        private readonly ILiveDevice device;
+
+        private NetworkInterfaceComparerMacWithVendor comparer;
+
+        public event EventHandler<HostEventArgs>? HostChanged;
         #endregion
 
         #region CTOR
-        public PassiveAnalyzer(ILiveDevice device, ConcurrentBag<Host> hosts, Packet packet, NetworkInterfaceComparerWithVendor macbyVendors)
+        public PassiveAnalyzer(IList<Host> hosts, ILiveDevice device, NetworkInterfaceComparerMacWithVendor comparer)
         {
-            this.device = device;
-            this.macbyVendors = macbyVendors;
             this.hosts = hosts;
+            this.device = device;
+            this.comparer = comparer;
+        }
+        #endregion
 
-            ethernetPacket = packet.Extract<EthernetPacket>();
-            ipPacket = packet.Extract<IPPacket>();
+        public async Task AnalyzePacket(Packet packet)
+        {
+            EthernetPacket? ethernetPacket = null;
+            IPPacket? ipPacket = null;
+            TcpPacket? tcpPacket = null;
+            UdpPacket? udpPacket = null;
+            ArpPacket? arpPacket = null;
+            IcmpV4Packet? icmpV4Packet = null;
+            IcmpV6Packet? icmpV6Packet = null;
+
+            ethernetPacket = ethernetPacket = packet.Extract<EthernetPacket>();
+            if (ethernetPacket != null)
+            {
+                ipPacket = packet.Extract<IPPacket>();
+                arpPacket = packet.Extract<ArpPacket>();
+                icmpV4Packet = packet.Extract<IcmpV4Packet>();
+                icmpV6Packet = packet.Extract<IcmpV6Packet>();
+            }
             if (ipPacket != null)
             {
                 tcpPacket = packet.Extract<TcpPacket>();
-                if (tcpPacket == null)
-                {
-                    udpPacket = packet.Extract<UdpPacket>();
-                }
+                udpPacket = packet.Extract<UdpPacket>();
             }
-            else
+
+            Host? sourceHost = GetSourceHost(ethernetPacket, ipPacket, arpPacket);
+            Host? destHost = GetDestHost(ethernetPacket, ipPacket, arpPacket);
+
+            if (sourceHost == null)
             {
-                arpPacket = packet.Extract<ArpPacket>();
-                if (arpPacket == null)
+                if (ipPacket != null && ethernetPacket != null)
                 {
-                    icmpV4Packet = packet.Extract<IcmpV4Packet>();
-                }
-            }
-        }
-        #endregion
-
-        #region Start Analyze
-        public async Task StartAnalyze()
-        {
-            Host? hostSource = GetHostSource();
-            Host? hostDest = GetHostDest();
-            if (hostSource != null && hostDest != null)
-            {
-                await Task.Run(async () =>
-                {
-                    var taskSource = TryGetNetworkInterfaceVendor(hostSource, HostDirectory.Source);
-                    TryGetIp(hostSource, HostDirectory.Source);
-
-                    var taskDestination = TryGetNetworkInterfaceVendor(hostDest, HostDirectory.Destination);
-                    TryGetIp(hostDest, HostDirectory.Destination);
-
-                    await Task.WhenAll(taskSource, taskDestination);
-                });
-            }
-        }
-        #endregion
-
-        #region GetHostsMethods
-        private Host GetHostSource()
-        {
-            Host? hostSource = null;
-            if (ipPacket != null)
-            {
-                hostSource = hosts.Where(x => x.IPAddress.ToString() == ipPacket.SourceAddress.ToString()).FirstOrDefault();
-                if (hostSource == null)
-                {
-                    hostSource = new Host(Guid.NewGuid(), ipPacket.SourceAddress)
+                    IPAddress? ipAddress = ipPacket.SourceAddress;
+                    sourceHost = new Host(Guid.NewGuid(), ipAddress);
+                    if (ipAddress.IsLocalWithDevice(device))
                     {
-                        MacAddress = ethernetPacket.SourceHardwareAddress,
-                        IsLocal = ipPacket.SourceAddress.IsLocalWithDevice(device)
-                    };
-                    hosts.Add(hostSource);
+                        sourceHost.MacAddress = ethernetPacket.SourceHardwareAddress;
+                        sourceHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(ethernetPacket.SourceHardwareAddress.ToString());
+                    }
+                    OnHostChanged(sourceHost);
                 }
-
-                if (tcpPacket != null)
+                else if (arpPacket != null)
                 {
+                    IPAddress? iPAddress = arpPacket.SenderProtocolAddress;
+                    sourceHost = new Host(Guid.NewGuid(), iPAddress);
+                    if (iPAddress.IsLocalWithDevice(device))
+                    {
+                        sourceHost.MacAddress = arpPacket.SenderHardwareAddress;
+                        sourceHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(arpPacket.SenderHardwareAddress.ToString());
+                    }
+                    OnHostChanged(sourceHost);
+                }
+            }
+            if (destHost == null)
+            {
+                if (ipPacket != null && ethernetPacket != null)
+                {
+                    IPAddress? ipAddress = ipPacket.DestinationAddress;
+                    destHost = new Host(Guid.NewGuid(), ipAddress);
+                    if (ipAddress.IsLocalWithDevice(device))
+                    {
+                        destHost.MacAddress = ethernetPacket.DestinationHardwareAddress;
+                        destHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(ethernetPacket.DestinationHardwareAddress.ToString());
+                    }
+                    OnHostChanged(destHost);
+                }
+                else if (arpPacket != null)
+                {
+                    IPAddress? iPAddress = arpPacket.TargetProtocolAddress;
+                    destHost = new Host(Guid.NewGuid(), iPAddress);
+                    if (iPAddress.IsLocalWithDevice(device))
+                    {
+                        destHost.MacAddress = arpPacket.TargetHardwareAddress;
+                        destHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(arpPacket.TargetHardwareAddress.ToString());
+                    }
+                    OnHostChanged(destHost);
+                }
+            }
+
+            if (udpPacket != null)
+            {
+                if (sourceHost != null)
+                {
+                    Port port = new Port(udpPacket.SourcePort, "UDP/IP", sourceHost);
+                    if (!sourceHost.Ports.Contains(port))
+                    {
+                        sourceHost.Ports.Add(port);
+                        sourceHost.PacketsSend += 1;
+                        OnHostChanged(sourceHost);
+                    }
+                }
+                if (destHost != null)
+                {
+                    Port port = new Port(udpPacket.SourcePort, "UDP/IP", destHost);
+                    if (!destHost.Ports.Contains(port))
+                    {
+                        destHost.Ports.Add(port);
+                        destHost.PacketsReceived += 1;
+                        OnHostChanged(destHost);
+                    }
+                }
+            }
+            if (tcpPacket != null)
+            {
+                /*
                     byte[] payloadData = tcpPacket.PayloadData;
 
                     if (payloadData.Length >= 4)
@@ -114,133 +156,84 @@ namespace NetworkScanner.Model.Utils
                     {
                         hostSource.Ports.Add(port);
                     }
-                }
-
-                if (udpPacket != null)
+                 */
+                if (sourceHost != null)
                 {
-                    Port port = new Port(udpPacket.SourcePort, "UDP/IP", hostSource);
-                    if (!hostSource.Ports.Contains(port))
+                    Port port = new Port(tcpPacket.SourcePort, "TCP/IP", sourceHost);
+                    if (!sourceHost.Ports.Contains(port))
                     {
-                        hostSource.Ports.Add(port);
+                        sourceHost.Ports.Add(port);
+                        sourceHost.PacketsSend += 1;
+                        OnHostChanged(sourceHost);
                     }
                 }
-
-                hostSource.PacketsSend += 1;
-            }
-            if (arpPacket != null)
-            {
-                hostSource = hosts.Where(x => x.IPAddress.ToString() == arpPacket.SenderProtocolAddress.ToString()).FirstOrDefault();
-                if (hostSource == null)
+                if (destHost != null)
                 {
-                    hostSource = new Host(Guid.NewGuid(), arpPacket.SenderProtocolAddress)
+                    Port port = new Port(tcpPacket.SourcePort, "TCP/IP", destHost);
+                    if (!destHost.Ports.Contains(port))
                     {
-                        MacAddress = arpPacket.SenderHardwareAddress,
-                        IsLocal = arpPacket.SenderProtocolAddress.IsLocalWithDevice(device)
-                    };
-                    hosts.Add(hostSource);
+                        destHost.Ports.Add(port);
+                        destHost.PacketsReceived += 1;
+                        OnHostChanged(destHost);
+                    }
                 }
-                hostSource.PacketsSend += 1;
             }
-            return hostSource;
         }
-        private Host GetHostDest()
+
+        private Host? GetSourceHost(EthernetPacket? ethernetPacket, IPPacket? ipPacket, ArpPacket? arpPacket)
         {
-            Host? hostDest = null;
-            if (ipPacket != null)
+            if (ethernetPacket != null && ipPacket != null)
             {
-                hostDest = hosts.Where(x => x.IPAddress.ToString() == ipPacket.DestinationAddress.ToString()).FirstOrDefault();
-                if (hostDest == null)
-                {
-                    hostDest = new Host(Guid.NewGuid(), ipPacket.DestinationAddress)
-                    {
-                        MacAddress = ethernetPacket.DestinationHardwareAddress,
-                        IsLocal = ipPacket.DestinationAddress.IsLocalWithDevice(device)
-                    };
-                    hosts.Add(hostDest);
-                }
+                PhysicalAddress macAddress = ethernetPacket.SourceHardwareAddress;
+                IPAddress ipAddress = ipPacket.SourceAddress;
 
-                if (tcpPacket != null)
-                {
-                    Port port = new Port(tcpPacket.DestinationPort, "TCP/IP", hostDest);
-                    if (!hostDest.Ports.Contains(port))
-                    {
-                        hostDest.Ports.Add(port);
-                    }
-                }
-                if (udpPacket != null)
-                {
-                    Port port = new Port(udpPacket.DestinationPort, "UDP/IP", hostDest);
-                    if (!hostDest.Ports.Contains(port))
-                    {
-                        hostDest.Ports.Add(port);
-                    }
-                }
-
-                hostDest.PacketsReceived += 1;
+                Host? host = hosts.FirstOrDefault(h => h.MacAddress == macAddress && h.IPAddress == ipAddress);
+                if (host != null) return host.Clone();
+                return null;
             }
-            if (arpPacket != null)
+            else if (arpPacket != null)
             {
-                hostDest = hosts.Where(x => x.IPAddress.ToString() == arpPacket.TargetProtocolAddress.ToString()).FirstOrDefault();
-                if (hostDest == null)
-                {
-                    hostDest = new Host(Guid.NewGuid(), arpPacket.TargetProtocolAddress)
-                    {
-                        MacAddress = arpPacket.TargetHardwareAddress,
-                        IsLocal = arpPacket.TargetProtocolAddress.IsLocalWithDevice(device)
-                    };
-                    hosts.Add(hostDest);
-                }
-                hostDest.PacketsReceived += 1;
+                PhysicalAddress macAddress = arpPacket.SenderHardwareAddress;
+                IPAddress ipAddress = arpPacket.SenderProtocolAddress;
+
+                Host? host = hosts.FirstOrDefault(h => h.MacAddress == macAddress && h.IPAddress == ipAddress);
+                if (host != null) return host.Clone();
+                return null;
             }
-            return hostDest;
+
+            return null;
         }
-        #endregion
-
-        #region Passive Analyze Methods
-        private async Task TryGetNetworkInterfaceVendor(Host host, HostDirectory directory)
+        private Host? GetDestHost(EthernetPacket? ethernetPacket, IPPacket? ipPacket, ArpPacket? arpPacket)
         {
-            if (host.NetworkInterfaceVendor == null || host.NetworkInterfaceVendor == "Unidentified")
+            if (ethernetPacket != null && ipPacket != null)
             {
-                string vendor = "Unidentified";
-                if (ethernetPacket != null)
-                {
-                    if (directory == HostDirectory.Source)
-                    {
-                        vendor = await macbyVendors.CompareMacAsync(ethernetPacket.SourceHardwareAddress.ToString());
-                    }
-                    else if (directory == HostDirectory.Destination)
-                    {
-                        vendor = await macbyVendors.CompareMacAsync(ethernetPacket.DestinationHardwareAddress.ToString());
-                    }
-                }
-                host.NetworkInterfaceVendor = vendor;
+                PhysicalAddress macAddress = ethernetPacket.DestinationHardwareAddress;
+                IPAddress ipAddress = ipPacket.DestinationAddress;
+
+                Host? host = hosts.FirstOrDefault(h => h.MacAddress == macAddress && h.IPAddress == ipAddress);
+                if (host != null) return host.Clone();
+                return null;
             }
+            else if (arpPacket != null)
+            {
+                PhysicalAddress macAddress = arpPacket.TargetHardwareAddress;
+                IPAddress ipAddress = arpPacket.TargetProtocolAddress;
+
+                Host? host = hosts.FirstOrDefault(h => h.MacAddress == macAddress && h.IPAddress == ipAddress);
+                if (host != null) return host.Clone();
+                return null;
+            }
+            return null;
         }
-        private void TryGetIp(Host host, HostDirectory directory)
+
+        private void OnHostChanged(Host host)
         {
-            if (host.IPAddress == null)
+            if (HostChanged != null)
             {
-                if (ipPacket != null)
-                {
-                    if (directory == HostDirectory.Source)
-                    {
-                        host.IPAddress = ipPacket.SourceAddress;
-                    }
-                    else if (directory == HostDirectory.Destination)
-                    {
-                        host.IPAddress = ipPacket.DestinationAddress;
-                    }
-                }
+                HostEventArgs args = new HostEventArgs(host);
+
+                HostChanged.Invoke(null, args);
             }
         }
-        #endregion
     }
-
-    #region Host Directory
-    internal enum HostDirectory
-    {
-        Source = 0,
-        Destination = 1
-    }
-    #endregion
 }

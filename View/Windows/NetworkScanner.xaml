@@ -18,7 +18,10 @@
 
         <!--Menu Panel-->
         <Menu Grid.Row="0" Height="25">
-            <MenuItem Height="25" Header="Файл"/>
+            <MenuItem Height="25" Header="Файл">
+                <MenuItem Header="Начать сканирование" Command="{Binding StartScan}"/>
+                <MenuItem Header="Остановить сканирование" Command="{Binding StopScan}"/>
+            </MenuItem>
             <MenuItem x:Name="DeviceButton" Height="25" Header="Выбор сетевого устройства"/>
             <MenuItem Height="25" Header="Выход" Click="OnExitButtonPressed"/>
         </Menu>

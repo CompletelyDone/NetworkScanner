@@ -28,6 +28,11 @@ namespace NetworkScanner.Model.Models
         }
         #endregion
 
+        public Host Clone()
+        {
+            return (Host)MemberwiseClone();
+        }
+
         public override string ToString()
         {
             string returning = "";

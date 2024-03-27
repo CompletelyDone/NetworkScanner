@@ -20,14 +20,14 @@ namespace View.Windows
 
             //Исправить DEBUG версия
             var devs = DeviceScanner.Scan();
-            var comparer = new NetworkInterfaceComparerWithVendor();
+            var comparer = new NetworkInterfaceComparerMacWithVendor();
             DispatcherFix dispatcher = new DispatcherFix(Application.Current.Dispatcher);
 
             //Исправить DEBUG версия
 
             this.DataContext = new ArpScannerVM(devs[0], comparer, dispatcher);
         }
-        public ArpScanner(NetworkScanner parent, ILiveDevice device, NetworkInterfaceComparerWithVendor comparer)
+        public ArpScanner(NetworkScanner parent, ILiveDevice device, NetworkInterfaceComparerMacWithVendor comparer)
         {
             parentWindow = parent;
             DispatcherFix dispatcher = new DispatcherFix(Application.Current.Dispatcher);
