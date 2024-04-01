@@ -33,6 +33,32 @@ namespace NetworkScanner.Model.Models
             return (Host)MemberwiseClone();
         }
 
+        public override bool Equals(object? obj)
+        {
+            if(obj == null || GetType() != obj.GetType())
+                return false;
+
+            Host other = (Host)obj;
+            if(MacAddress == null && other.MacAddress == null)
+                return IPAddress.ToString() == other.IPAddress.ToString();
+            if (MacAddress == null && other.MacAddress != null)
+                return false;
+            if (MacAddress != null && other.MacAddress == null)
+                return false;
+
+            return IPAddress.ToString() == other.IPAddress.ToString() && MacAddress?.ToString() == other.MacAddress?.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+
+            hash = hash * 23 + IPAddress.GetHashCode();
+            hash = hash * 23 + (MacAddress != null ? MacAddress.GetHashCode() : 0);
+
+            return hash;
+        }
+
         public override string ToString()
         {
             string returning = "";

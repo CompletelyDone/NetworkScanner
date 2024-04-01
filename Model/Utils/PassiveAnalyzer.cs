@@ -15,7 +15,7 @@ namespace NetworkScanner.Model.Utils
 
         private NetworkInterfaceComparerMacWithVendor comparer;
 
-        public event EventHandler<HostEventArgs>? HostChanged;
+        public event EventHandler<PacketAnalyzedArgs>? PacketAnalyzed;
         #endregion
 
         #region CTOR
@@ -65,7 +65,6 @@ namespace NetworkScanner.Model.Utils
                         sourceHost.MacAddress = ethernetPacket.SourceHardwareAddress;
                         sourceHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(ethernetPacket.SourceHardwareAddress.ToString());
                     }
-                    OnHostChanged(sourceHost);
                 }
                 else if (arpPacket != null)
                 {
@@ -76,7 +75,6 @@ namespace NetworkScanner.Model.Utils
                         sourceHost.MacAddress = arpPacket.SenderHardwareAddress;
                         sourceHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(arpPacket.SenderHardwareAddress.ToString());
                     }
-                    OnHostChanged(sourceHost);
                 }
             }
             if (destHost == null)
@@ -90,7 +88,6 @@ namespace NetworkScanner.Model.Utils
                         destHost.MacAddress = ethernetPacket.DestinationHardwareAddress;
                         destHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(ethernetPacket.DestinationHardwareAddress.ToString());
                     }
-                    OnHostChanged(destHost);
                 }
                 else if (arpPacket != null)
                 {
@@ -101,7 +98,6 @@ namespace NetworkScanner.Model.Utils
                         destHost.MacAddress = arpPacket.TargetHardwareAddress;
                         destHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(arpPacket.TargetHardwareAddress.ToString());
                     }
-                    OnHostChanged(destHost);
                 }
             }
 
@@ -114,7 +110,6 @@ namespace NetworkScanner.Model.Utils
                     {
                         sourceHost.Ports.Add(port);
                         sourceHost.PacketsSend += 1;
-                        OnHostChanged(sourceHost);
                     }
                 }
                 if (destHost != null)
@@ -124,7 +119,6 @@ namespace NetworkScanner.Model.Utils
                     {
                         destHost.Ports.Add(port);
                         destHost.PacketsReceived += 1;
-                        OnHostChanged(destHost);
                     }
                 }
             }
@@ -164,7 +158,6 @@ namespace NetworkScanner.Model.Utils
                     {
                         sourceHost.Ports.Add(port);
                         sourceHost.PacketsSend += 1;
-                        OnHostChanged(sourceHost);
                     }
                 }
                 if (destHost != null)
@@ -174,10 +167,11 @@ namespace NetworkScanner.Model.Utils
                     {
                         destHost.Ports.Add(port);
                         destHost.PacketsReceived += 1;
-                        OnHostChanged(destHost);
                     }
                 }
             }
+
+            OnPacketAnalyzed(sourceHost, destHost);
         }
 
         private Host? GetSourceHost(EthernetPacket? ethernetPacket, IPPacket? ipPacket, ArpPacket? arpPacket)
@@ -187,7 +181,8 @@ namespace NetworkScanner.Model.Utils
                 PhysicalAddress macAddress = ethernetPacket.SourceHardwareAddress;
                 IPAddress ipAddress = ipPacket.SourceAddress;
 
-                Host? host = hosts.FirstOrDefault(h => h.MacAddress == macAddress && h.IPAddress == ipAddress);
+                Host? host = hosts.FirstOrDefault(h => h.MacAddress?.ToString() == macAddress.ToString() && h.IPAddress.ToString() == ipAddress.ToString());
+                if(host ==  null) host = hosts.FirstOrDefault(host => host.IPAddress.ToString() == ipAddress.ToString());
                 if (host != null) return host.Clone();
                 return null;
             }
@@ -196,7 +191,8 @@ namespace NetworkScanner.Model.Utils
                 PhysicalAddress macAddress = arpPacket.SenderHardwareAddress;
                 IPAddress ipAddress = arpPacket.SenderProtocolAddress;
 
-                Host? host = hosts.FirstOrDefault(h => h.MacAddress == macAddress && h.IPAddress == ipAddress);
+                Host? host = hosts.FirstOrDefault(h => h.MacAddress?.ToString() == macAddress.ToString() && h.IPAddress.ToString() == ipAddress.ToString());
+                if (host == null) host = hosts.FirstOrDefault(host => host.IPAddress.ToString() == ipAddress.ToString());
                 if (host != null) return host.Clone();
                 return null;
             }
@@ -210,7 +206,8 @@ namespace NetworkScanner.Model.Utils
                 PhysicalAddress macAddress = ethernetPacket.DestinationHardwareAddress;
                 IPAddress ipAddress = ipPacket.DestinationAddress;
 
-                Host? host = hosts.FirstOrDefault(h => h.MacAddress == macAddress && h.IPAddress == ipAddress);
+                Host? host = hosts.FirstOrDefault(h => h.MacAddress?.ToString() == macAddress.ToString() && h.IPAddress.ToString() == ipAddress.ToString());
+                if (host == null) host = hosts.FirstOrDefault(host => host.IPAddress.ToString() == ipAddress.ToString());
                 if (host != null) return host.Clone();
                 return null;
             }
@@ -219,20 +216,22 @@ namespace NetworkScanner.Model.Utils
                 PhysicalAddress macAddress = arpPacket.TargetHardwareAddress;
                 IPAddress ipAddress = arpPacket.TargetProtocolAddress;
 
-                Host? host = hosts.FirstOrDefault(h => h.MacAddress == macAddress && h.IPAddress == ipAddress);
+                Host? host = hosts.FirstOrDefault(h => h.MacAddress?.ToString() == macAddress.ToString() && h.IPAddress.ToString() == ipAddress.ToString());
+                if (host == null) host = hosts.FirstOrDefault(host => host.IPAddress.ToString() == ipAddress.ToString());
                 if (host != null) return host.Clone();
                 return null;
             }
             return null;
         }
 
-        private void OnHostChanged(Host host)
-        {
-            if (HostChanged != null)
-            {
-                HostEventArgs args = new HostEventArgs(host);
 
-                HostChanged.Invoke(null, args);
+        private void OnPacketAnalyzed(Host? sourceHost, Host? destinationHost)
+        {
+            if (PacketAnalyzed != null)
+            {
+                PacketAnalyzedArgs args = new PacketAnalyzedArgs(sourceHost, destinationHost);
+
+                PacketAnalyzed.Invoke(null, args);
             }
         }
     }

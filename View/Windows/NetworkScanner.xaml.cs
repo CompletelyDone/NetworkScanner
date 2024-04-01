@@ -42,6 +42,7 @@ namespace View.Windows
         public Command ChooseDevice { get; private set; }
         private void ChooseDeviceMethod()
         {
+            DeviceButton.Items.Clear();
             var context = this.DataContext as NetworkScannerVM;
             foreach (var device in context.Devices)
             {
@@ -50,7 +51,7 @@ namespace View.Windows
 
                 item.Command = new Command(() =>
                 {
-                    context.SelectedDevice = device;
+                    context.SelectDevice(device);
                 });
 
                 DeviceButton.Items.Add(item);

@@ -12,74 +12,83 @@ namespace ViewModel
     {
         private readonly IDispatcherFix dispatcher;
         private readonly IErrorGenerator errorGenerator;
+        private NetworkInterfaceComparerMacWithVendor comparerMacWithVendor = new NetworkInterfaceComparerMacWithVendor();
 
         private ObservableCollection<ILiveDevice> devices = new ObservableCollection<ILiveDevice>();
         public ObservableCollection<ILiveDevice> Devices
         {
             get => devices;
-            set { devices = value; OnPropertyChanged(); }
+            set
+            {
+                devices = value;
+                OnPropertyChanged();
+            }
         }
 
         private ILiveDevice? selectedDevice;
-        public ILiveDevice? SelectedDevice { get; set; }
+        public void SelectDevice(ILiveDevice device)
+        {
+            selectedDevice = device;
+        }
 
         private ObservableCollection<Host> hosts = new ObservableCollection<Host>();
-        public ObservableCollection<Host> Hosts 
-        { 
+        public ObservableCollection<Host> Hosts
+        {
             get => hosts;
-            set { hosts = value; OnPropertyChanged(); }
+            set
+            {
+                hosts = value;
+                OnPropertyChanged();
+            }
         }
 
         public NetworkScannerVM(IDispatcherFix dispatcher, IErrorGenerator errorGenerator)
         {
-            Hosts = new ObservableCollection<Host>();
+            this.dispatcher = dispatcher;
+            this.errorGenerator = errorGenerator;
+
             var devs = DeviceScanner.Scan();
             dispatcher.Invoke(() =>
             {
-                foreach(var dev in devs)
+                foreach (var dev in devs)
                 {
                     Devices.Add(dev);
                 }
             });
-            this.dispatcher = dispatcher;
-            this.errorGenerator = errorGenerator;
 
             StartScan = new Command(StartScanMethod, () =>
             {
-                if (isRunning) return false;
-                return true;
+                return !isRunning;
             });
             StopScan = new Command(StopScanMethod, () =>
             {
-                return isRunning ? true : false;
+                return isRunning;
             });
         }
 
-        private NetworkInterfaceComparerMacWithVendor comparerMacWithVendor = new NetworkInterfaceComparerMacWithVendor();
 
         private CancellationTokenSource? cancellationTokenSource;
         private CancellationToken cancellationToken;
+
         private bool isRunning = false;
 
         private PacketCapturer? packetCapturer;
 
         public Command StartScan { get; private set; }
-        private async void StartScanMethod()
+        private void StartScanMethod()
         {
-            if(selectedDevice != null)
+            if (selectedDevice != null)
             {
-                if(!isRunning)
+                if (!isRunning)
                 {
                     isRunning = true;
                     cancellationTokenSource = new CancellationTokenSource();
                     cancellationToken = cancellationTokenSource.Token;
 
                     packetCapturer = new PacketCapturer(selectedDevice, Hosts, comparerMacWithVendor);
+                    packetCapturer.PacketAnalyzed += OnPacketAnalyzed;
 
-                    await Task.Run(() =>
-                    {
-                        packetCapturer.StartCapturePackets(cancellationToken);
-                    });
+                    packetCapturer.StartCapturePackets(cancellationToken);
                 }
                 else
                 {
@@ -89,14 +98,60 @@ namespace ViewModel
             else
             {
                 errorGenerator.GenerateError("Выберите устройство");
-                errorGenerator.GenerateError($"Выбранное устройство: {selectedDevice}");
             }
         }
 
-        public Command StopScan { get; private set;}
-        private async void StopScanMethod()
+        private void OnPacketAnalyzed(object? sender, PacketAnalyzedArgs hostsArgs)
         {
-            if(isRunning)
+            Host? sourceHost = hostsArgs.SourceHost;
+            Host? destHost = hostsArgs.DestinationHost;
+            if (sourceHost == null && destHost == null) return;
+
+            if(sourceHost != null && !Hosts.Contains(sourceHost))
+            {
+                dispatcher.Invoke(() =>
+                {
+                    Hosts.Add(sourceHost);
+                });
+            }
+            else if (sourceHost != null && Hosts.Contains(sourceHost))
+            {
+                var existingHost = Hosts
+                    .FirstOrDefault(host =>
+                    host.IPAddress.ToString() == sourceHost.IPAddress.ToString() &&
+                    host.MacAddress?.ToString() == sourceHost.MacAddress?.ToString());
+
+                if (existingHost != null)
+                {
+                    existingHost.Ports = existingHost.Ports.Union(sourceHost.Ports).ToList();
+                }
+            }
+
+            if (destHost != null && !Hosts.Contains(destHost))
+            {
+                dispatcher.Invoke(() =>
+                {
+                    Hosts.Add(destHost);
+                });
+            }
+            else if (destHost != null && Hosts.Contains(destHost))
+            {
+                var existingHost = Hosts
+                    .FirstOrDefault(host =>
+                    host.IPAddress.ToString() == destHost.IPAddress.ToString() &&
+                    host.MacAddress?.ToString() == destHost.MacAddress?.ToString());
+
+                if (existingHost != null)
+                {
+                    existingHost.Ports = existingHost.Ports.Union(destHost.Ports).ToList();
+                }
+            }
+        }
+
+        public Command StopScan { get; private set; }
+        private void StopScanMethod()
+        {
+            if (isRunning)
             {
                 cancellationTokenSource.Cancel();
                 isRunning = false;
@@ -111,13 +166,6 @@ namespace ViewModel
 
 
 
-        private void OnHostCreated(object? sender, HostEventArgs args)
-        {
-            Host host = args.Host;
-            dispatcher.Invoke(() =>
-            {
-                Hosts.Add(host);
-            });
-        }
+
     }
 }

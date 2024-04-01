@@ -34,11 +34,11 @@
         </StackPanel>
 
         <!--Information Panel-->
-        <DataGrid Grid.Row="2" 
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Hosts}" AutoGenerateColumns="False"
           GridLinesVisibility="Horizontal">
             <DataGrid.Columns>
-                <DataGridTextColumn IsReadOnly="True" Header="IP"/>
-                <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес"/>
+                <DataGridTextColumn IsReadOnly="True" Header="IP" Binding="{Binding IPAddress}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес" Binding="{Binding MacAddress}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Информация"/>
             </DataGrid.Columns>
         </DataGrid>

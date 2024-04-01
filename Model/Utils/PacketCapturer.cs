@@ -11,6 +11,8 @@ namespace NetworkScanner.Model.Utils
 
         private PassiveAnalyzer passiveAnalyzer;
         private Packet? packet;
+
+        public event EventHandler<PacketAnalyzedArgs>? PacketAnalyzed;
         #endregion
 
         #region CTOR
@@ -19,6 +21,8 @@ namespace NetworkScanner.Model.Utils
             this.device = device;
 
             passiveAnalyzer = new PassiveAnalyzer(hosts, device, comparer);
+
+            passiveAnalyzer.PacketAnalyzed += PassiveAnalyzerCompleted;
         }
         #endregion
 
@@ -43,6 +47,15 @@ namespace NetworkScanner.Model.Utils
             packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
             passiveAnalyzer.AnalyzePacket(packet);
+        }
+
+        private void OnPacketAnalyzed(PacketAnalyzedArgs args)
+        {
+            PacketAnalyzed?.Invoke(null, args);
+        }
+        private void PassiveAnalyzerCompleted(object? sender, PacketAnalyzedArgs args)
+        {
+            OnPacketAnalyzed(args);
         }
     }
 }
