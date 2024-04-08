@@ -4,9 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.Windows"
+        xmlns:helpers="clr-namespace:View.Utils"
         mc:Ignorable="d"
         Title="NetworkScanner" Height="600" Width="400"
         MinHeight="600" MinWidth="400">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <helpers:InverseBoolConverter x:Key="InverseBoolConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    
     <Grid>
         <!--Definitions-->
         <Grid.RowDefinitions>
@@ -19,8 +27,14 @@
         <!--Menu Panel-->
         <Menu Grid.Row="0" Height="25">
             <MenuItem Height="25" Header="Файл">
-                <MenuItem Header="Начать сканирование" Command="{Binding StartScan}"/>
-                <MenuItem Header="Остановить сканирование" Command="{Binding StopScan}"/>
+                <MenuItem Header="Активное сканирование" IsEnabled="False"/>
+                <MenuItem Header="ARP сканер"/>
+                <Separator/>
+                <MenuItem Header="Пассивное сканирование" IsEnabled="False"/>
+                <Separator/>
+                <MenuItem Header="Начать сканирование" Command="{Binding StartScan}"
+                          IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}"/>
+                <MenuItem Header="Остановить сканирование" Command="{Binding StopScan}" IsEnabled="{Binding IsRunning}"/>
             </MenuItem>
             <MenuItem x:Name="DeviceButton" Height="25" Header="Выбор сетевого устройства"/>
             <MenuItem Height="25" Header="Выход" Click="OnExitButtonPressed"/>

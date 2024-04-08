@@ -56,14 +56,8 @@ namespace ViewModel
                 }
             });
 
-            StartScan = new Command(StartScanMethod, () =>
-            {
-                return !isRunning;
-            });
-            StopScan = new Command(StopScanMethod, () =>
-            {
-                return isRunning;
-            });
+            StartScan = new Command(StartScanMethod);
+            StopScan = new Command(StopScanMethod);
         }
 
 
@@ -71,6 +65,15 @@ namespace ViewModel
         private CancellationToken cancellationToken;
 
         private bool isRunning = false;
+        public bool IsRunning
+        {
+            get => isRunning;
+            private set
+            {
+                isRunning = value;
+                OnPropertyChanged();
+            }
+        }
 
         private PacketCapturer? packetCapturer;
 
@@ -79,9 +82,9 @@ namespace ViewModel
         {
             if (selectedDevice != null)
             {
-                if (!isRunning)
+                if (!IsRunning)
                 {
-                    isRunning = true;
+                    IsRunning = true;
                     cancellationTokenSource = new CancellationTokenSource();
                     cancellationToken = cancellationTokenSource.Token;
 
@@ -151,10 +154,10 @@ namespace ViewModel
         public Command StopScan { get; private set; }
         private void StopScanMethod()
         {
-            if (isRunning)
+            if (IsRunning)
             {
                 cancellationTokenSource.Cancel();
-                isRunning = false;
+                IsRunning = false;
             }
             else
             {
