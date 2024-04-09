@@ -14,7 +14,7 @@
             <helpers:InverseBoolConverter x:Key="InverseBoolConverter"/>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid>
         <!--Definitions-->
         <Grid.RowDefinitions>
@@ -27,14 +27,15 @@
         <!--Menu Panel-->
         <Menu Grid.Row="0" Height="25">
             <MenuItem Height="25" Header="Файл">
-                <MenuItem Header="Активное сканирование" IsEnabled="False"/>
-                <MenuItem Header="ARP сканер"/>
-                <Separator/>
-                <MenuItem Header="Пассивное сканирование" IsEnabled="False"/>
-                <Separator/>
-                <MenuItem Header="Начать сканирование" Command="{Binding StartScan}"
-                          IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}"/>
-                <MenuItem Header="Остановить сканирование" Command="{Binding StopScan}" IsEnabled="{Binding IsRunning}"/>
+                <MenuItem Header="Активное сканирование">
+                    <MenuItem Header="ARP сканер"/>
+                </MenuItem>
+                <MenuItem Header="Пассивное сканирование">
+                    <MenuItem Header="Начать сканирование" Command="{Binding StartScan}"
+                              IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}"/>
+                    <MenuItem Header="Остановить сканирование" Command="{Binding StopScan}" IsEnabled="{Binding IsRunning}"/>
+                </MenuItem>
+                <MenuItem Header="Очистить поле" Command="{Binding ClearHosts}"/>
             </MenuItem>
             <MenuItem x:Name="DeviceButton" Height="25" Header="Выбор сетевого устройства"/>
             <MenuItem Height="25" Header="Выход" Click="OnExitButtonPressed"/>
@@ -43,12 +44,12 @@
         <!--Filter-->
         <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Label Content="Фильтр"/>
-            <TextBox Width="150" Background="BlanchedAlmond"/>
-            <CheckBox Content="Localhost" VerticalAlignment="Center"/>
+            <TextBox Width="150" Background="BlanchedAlmond"
+                     Text="{Binding HostsFilter, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 
         <!--Information Panel-->
-        <DataGrid Grid.Row="2" ItemsSource="{Binding Hosts}" AutoGenerateColumns="False"
+        <DataGrid Grid.Row="2" ItemsSource="{Binding FilteredHosts}" AutoGenerateColumns="False"
           GridLinesVisibility="Horizontal">
             <DataGrid.Columns>
                 <DataGridTextColumn IsReadOnly="True" Header="IP" Binding="{Binding IPAddress}"/>

@@ -38,7 +38,42 @@ namespace ViewModel
             set
             {
                 hosts = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(Hosts));
+                OnPropertyChanged(nameof(FilteredHosts));
+            }
+        }
+        public ObservableCollection<Host> FilteredHosts
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(hostsFilter)) return hosts;
+
+                var filtered = hosts
+                    .Where(x => x.IPAddress.ToString().Contains(hostsFilter) ||
+                    (x.MacAddress != null && x.MacAddress.ToString().Contains(hostsFilter)) ||
+                    (x.NetworkInterfaceVendor != null && x.NetworkInterfaceVendor.Contains(hostsFilter)) ||
+                    (x.UserAgent != null && x.UserAgent.Contains(hostsFilter)));
+
+
+                if (hostsFilter.Contains("local") || hostsFilter.Contains("Локал"))
+                    filtered = filtered.Where(x => x.IsLocal);
+
+                filtered = filtered
+                    .Distinct();
+                hosts = new ObservableCollection<Host>(hosts.Distinct());
+                return new ObservableCollection<Host>(filtered);
+            }
+        }
+
+        private string hostsFilter;
+        public string HostsFilter
+        {
+            get => hostsFilter;
+            set
+            {
+                hostsFilter = value;
+                OnPropertyChanged(nameof(HostsFilter));
+                OnPropertyChanged(nameof(FilteredHosts));
             }
         }
 
@@ -58,6 +93,7 @@ namespace ViewModel
 
             StartScan = new Command(StartScanMethod);
             StopScan = new Command(StopScanMethod);
+            ClearHosts = new Command(ClearHostsMethod);
         }
 
 
@@ -110,7 +146,7 @@ namespace ViewModel
             Host? destHost = hostsArgs.DestinationHost;
             if (sourceHost == null && destHost == null) return;
 
-            if(sourceHost != null && !Hosts.Contains(sourceHost))
+            if (sourceHost != null && !Hosts.Contains(sourceHost))
             {
                 dispatcher.Invoke(() =>
                 {
@@ -165,7 +201,19 @@ namespace ViewModel
             }
         }
 
-
+        public Command ClearHosts {  get; private set; }
+        private void ClearHostsMethod()
+        {
+            if (IsRunning)
+            {
+                errorGenerator.GenerateError("Остановите сканирование");
+            }
+            else
+            {
+                Hosts.Clear();
+                OnPropertyChanged(nameof(FilteredHosts));
+            }
+        }
 
 
 
