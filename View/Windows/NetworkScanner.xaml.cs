@@ -38,6 +38,13 @@ namespace View.Windows
             }
         }
 
+        #region ARPScannerButton
+        private void OpenARPScanner(object sender, RoutedEventArgs e)
+        {
+            ArpScanner arpScanner = new ArpScanner();
+            arpScanner.Show();
+        }
+        #endregion
         #region ChooseDeviceButton
         public Command ChooseDevice { get; private set; }
         private void ChooseDeviceMethod()
@@ -63,6 +70,17 @@ namespace View.Windows
         {
             this.Close();
         }
+
         #endregion
+
+        private void InfoPanelSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Host host = (Host)InformationPanelGrid.SelectedItem;
+            
+            if(host != null)
+            {
+                InformationTextBlock.Text = host.ToString();
+            }
+        }
     }
 }

@@ -56,7 +56,7 @@ namespace ViewModel
 
 
                 if (hostsFilter.Contains("local") || hostsFilter.Contains("Локал"))
-                    filtered = filtered.Where(x => x.IsLocal);
+                    filtered = hosts.Where(x => x.IsLocal);
 
                 filtered = filtered
                     .Distinct();

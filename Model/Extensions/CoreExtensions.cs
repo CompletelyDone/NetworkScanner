@@ -1,12 +1,11 @@
-﻿using NetworkScanner.Model.Models;
-using SharpPcap;
+﻿using SharpPcap;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
 namespace NetworkScanner.Model.Extensions
 {
-    public static class DeviceExtensions
+    public static class CoreExtensions
     {
         public static IPAddress GetIPAdress(this ILiveDevice device)
         {

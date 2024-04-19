@@ -62,6 +62,7 @@ namespace NetworkScanner.Model.Utils
                     sourceHost = new Host(Guid.NewGuid(), ipAddress);
                     if (ipAddress.IsLocalWithDevice(device))
                     {
+                        sourceHost.IsLocal = true;
                         sourceHost.MacAddress = ethernetPacket.SourceHardwareAddress;
                         sourceHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(ethernetPacket.SourceHardwareAddress.ToString());
                     }
@@ -72,6 +73,7 @@ namespace NetworkScanner.Model.Utils
                     sourceHost = new Host(Guid.NewGuid(), iPAddress);
                     if (iPAddress.IsLocalWithDevice(device))
                     {
+                        sourceHost.IsLocal = true;
                         sourceHost.MacAddress = arpPacket.SenderHardwareAddress;
                         sourceHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(arpPacket.SenderHardwareAddress.ToString());
                     }
@@ -85,6 +87,7 @@ namespace NetworkScanner.Model.Utils
                     destHost = new Host(Guid.NewGuid(), ipAddress);
                     if (ipAddress.IsLocalWithDevice(device))
                     {
+                        destHost.IsLocal = true;
                         destHost.MacAddress = ethernetPacket.DestinationHardwareAddress;
                         destHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(ethernetPacket.DestinationHardwareAddress.ToString());
                     }
@@ -95,6 +98,7 @@ namespace NetworkScanner.Model.Utils
                     destHost = new Host(Guid.NewGuid(), iPAddress);
                     if (iPAddress.IsLocalWithDevice(device))
                     {
+                        destHost.IsLocal = true;
                         destHost.MacAddress = arpPacket.TargetHardwareAddress;
                         destHost.NetworkInterfaceVendor = await comparer.CompareMacAsync(arpPacket.TargetHardwareAddress.ToString());
                     }

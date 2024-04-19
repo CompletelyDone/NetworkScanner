@@ -28,7 +28,7 @@
         <Menu Grid.Row="0" Height="25">
             <MenuItem Height="25" Header="Файл">
                 <MenuItem Header="Активное сканирование">
-                    <MenuItem Header="ARP сканер"/>
+                    <MenuItem Header="ARP сканер" Click="OpenARPScanner"/>
                 </MenuItem>
                 <MenuItem Header="Пассивное сканирование">
                     <MenuItem Header="Начать сканирование" Command="{Binding StartScan}"
@@ -50,17 +50,17 @@
 
         <!--Information Panel-->
         <DataGrid Grid.Row="2" ItemsSource="{Binding FilteredHosts}" AutoGenerateColumns="False"
-          GridLinesVisibility="Horizontal">
+          GridLinesVisibility="Horizontal" SelectionChanged="InfoPanelSelectionChanged" x:Name="InformationPanelGrid">
             <DataGrid.Columns>
                 <DataGridTextColumn IsReadOnly="True" Header="IP" Binding="{Binding IPAddress}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес" Binding="{Binding MacAddress}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="Информация"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Производитель сетевого устройства" Binding="{Binding NetworkInterfaceVendor}"/>
             </DataGrid.Columns>
         </DataGrid>
 
         <!--Detail Information-->
         <DockPanel Grid.Row="3">
-            <TextBlock DockPanel.Dock="Top" Text="Подробная информация"/>
+            <TextBlock x:Name="InformationTextBlock" DockPanel.Dock="Top" Text="Подробная информация"/>
         </DockPanel>
     </Grid>
 </Window>
