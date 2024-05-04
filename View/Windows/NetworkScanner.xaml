@@ -38,6 +38,10 @@
                 <MenuItem Header="Очистить поле" Command="{Binding ClearHosts}"/>
             </MenuItem>
             <MenuItem x:Name="DeviceButton" Height="25" Header="Выбор сетевого устройства"/>
+            <MenuItem Header="Импорт/Экспорт">
+                <MenuItem Header="Сохранить"/>
+                <MenuItem Header="Загрузить"/>
+            </MenuItem>
             <MenuItem Height="25" Header="Выход" Click="OnExitButtonPressed"/>
         </Menu>
 
@@ -54,7 +58,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn IsReadOnly="True" Header="IP" Binding="{Binding IPAddress}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="MAC-адрес" Binding="{Binding MacAddress}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="Производитель сетевого устройства" Binding="{Binding NetworkInterfaceVendor}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Производитель" Binding="{Binding NetworkInterfaceVendor}"/>
             </DataGrid.Columns>
         </DataGrid>
 

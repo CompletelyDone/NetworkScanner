@@ -228,7 +228,6 @@ namespace NetworkScanner.Model.Utils
             return null;
         }
 
-
         private void OnPacketAnalyzed(Host? sourceHost, Host? destinationHost)
         {
             if (PacketAnalyzed != null)

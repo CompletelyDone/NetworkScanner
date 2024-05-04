@@ -33,10 +33,7 @@ namespace NetworkScanner.Model.Utils
             {
                 device.Open(DeviceModes.Promiscuous, 1000);
                 device.StartCapture();
-                while (!cnclToken.IsCancellationRequested)
-                {
-
-                }
+                while (!cnclToken.IsCancellationRequested) {}
                 device.StopCapture();
                 device.Dispose();
             });

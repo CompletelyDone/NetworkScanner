@@ -214,9 +214,5 @@ namespace ViewModel
                 OnPropertyChanged(nameof(FilteredHosts));
             }
         }
-
-
-
-
     }
 }

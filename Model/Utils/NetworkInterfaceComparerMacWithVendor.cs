@@ -8,7 +8,7 @@ namespace NetworkScanner.Model.Utils
         public NetworkInterfaceComparerMacWithVendor()
         {
             macByVendors = new Dictionary<string, string>();
-            XDocument doc = XDocument.Load("D:\\Diplom\\NetworkScanner\\Model\\Assets\\vendorMacs.xml");   
+            XDocument doc = XDocument.Load("./Assets/vendorMacs.xml");
             XNamespace ns = "http://www.cisco.com/server/spt";
             IEnumerable<XElement> elements = doc.Descendants(ns + "VendorMapping");
             foreach (XElement element in elements)
