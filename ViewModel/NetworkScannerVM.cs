@@ -65,7 +65,7 @@ namespace ViewModel
             }
         }
 
-        private string hostsFilter;
+        private string hostsFilter = "";
         public string HostsFilter
         {
             get => hostsFilter;

@@ -62,13 +62,13 @@ namespace NetworkScanner.Model.Models
         public override string ToString()
         {
             string returning = "";
-            returning += $"IP: {IPAddress}. ";
-            returning += $"Local:{IsLocal}. ";
+            returning += $"IP: {IPAddress}.\n";
+            returning += $"Local:{IsLocal}.\n";
             if(IsLocal) 
-                returning += $"MAC: {MacAddress}. ";
-                returning += $"Network Interface Vendor: {NetworkInterfaceVendor}. ";
-            returning += $"\nPackets Send: {PacketsSend}. ";
-            returning += $"\nPackets Received: {PacketsReceived}. \n";
+                returning += $"MAC: {MacAddress}.\n";
+                returning += $"Network Interface Vendor: {NetworkInterfaceVendor}.\n";
+            returning += $"Packets Send: {PacketsSend}.\n";
+            returning += $"Packets Received: {PacketsReceived}. \n";
             if (UserAgent != null)
                 returning += $"User Agent: {UserAgent}\n";
             if (Ports.Count > 0 && !IsLocal)
