@@ -10,10 +10,10 @@ namespace ViewModel
     public class ArpScannerVM : ViewModelBase
     {
         private readonly ILiveDevice device;
-        private readonly NetworkInterfaceComparerMacWithVendor comparerVendor;
+        private readonly ManufacturerScanner comparerVendor;
         private readonly IDispatcherFix dispatcher;
 
-        public ArpScannerVM(ILiveDevice _device, NetworkInterfaceComparerMacWithVendor _comparerVendor, IDispatcherFix dispatcher)
+        public ArpScannerVM(ILiveDevice _device, ManufacturerScanner _comparerVendor, IDispatcherFix dispatcher)
         {
             device = _device;
             comparerVendor = _comparerVendor;

@@ -10,7 +10,7 @@ namespace NetworkScanner.Model.Utils
     {
         public static event EventHandler<HostEventArgs>? HostCreated;
 
-        public static async Task Scan(ILiveDevice device, NetworkInterfaceComparerMacWithVendor comparer)
+        public static async Task Scan(ILiveDevice device, ManufacturerScanner comparer)
         {
             var localIP = device.GetIPAdress().ToString();
             var mask = device.GetSubnetMask().ToString();
@@ -61,7 +61,7 @@ namespace NetworkScanner.Model.Utils
             ping.Send(targetIp, timeout);
         }
 
-        private static async Task GetMacAddressFromArpCache(NetworkInterfaceComparerMacWithVendor comparer)
+        private static async Task GetMacAddressFromArpCache(ManufacturerScanner comparer)
         {
             string arpCommand = $"arp -a";
 

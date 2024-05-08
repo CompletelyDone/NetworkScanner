@@ -16,7 +16,7 @@ namespace NetworkScanner.Model.Utils
         #endregion
 
         #region CTOR
-        public PacketCapturer(ILiveDevice device, IList<Host> hosts, NetworkInterfaceComparerMacWithVendor comparer)
+        public PacketCapturer(ILiveDevice device, IList<Host> hosts, ManufacturerScanner comparer)
         {
             this.device = device;
 

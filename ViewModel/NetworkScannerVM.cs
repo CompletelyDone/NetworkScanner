@@ -12,7 +12,7 @@ namespace ViewModel
     {
         private readonly IDispatcherFix dispatcher;
         private readonly IErrorGenerator errorGenerator;
-        private NetworkInterfaceComparerMacWithVendor comparerMacWithVendor = new NetworkInterfaceComparerMacWithVendor();
+        private ManufacturerScanner comparerMacWithVendor = new ManufacturerScanner();
 
         private ObservableCollection<ILiveDevice> devices = new ObservableCollection<ILiveDevice>();
         public ObservableCollection<ILiveDevice> Devices

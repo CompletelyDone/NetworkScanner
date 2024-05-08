@@ -2,10 +2,10 @@
 
 namespace NetworkScanner.Model.Utils
 {
-    public class NetworkInterfaceComparerMacWithVendor
+    public class ManufacturerScanner
     {
         private readonly Dictionary<string, string> macByVendors;
-        public NetworkInterfaceComparerMacWithVendor()
+        public ManufacturerScanner()
         {
             macByVendors = new Dictionary<string, string>();
             XDocument doc = XDocument.Load("./Assets/vendorMacs.xml");

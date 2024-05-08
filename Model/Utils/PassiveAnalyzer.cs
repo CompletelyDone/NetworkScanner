@@ -13,13 +13,13 @@ namespace NetworkScanner.Model.Utils
         private readonly IList<Host> hosts;
         private readonly ILiveDevice device;
 
-        private NetworkInterfaceComparerMacWithVendor comparer;
+        private ManufacturerScanner comparer;
 
         public event EventHandler<PacketAnalyzedArgs>? PacketAnalyzed;
         #endregion
 
         #region CTOR
-        public PassiveAnalyzer(IList<Host> hosts, ILiveDevice device, NetworkInterfaceComparerMacWithVendor comparer)
+        public PassiveAnalyzer(IList<Host> hosts, ILiveDevice device, ManufacturerScanner comparer)
         {
             this.hosts = hosts;
             this.device = device;
