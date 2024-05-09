@@ -109,7 +109,7 @@ namespace NetworkScanner.Model.Utils
             {
                 if (sourceHost != null)
                 {
-                    Port port = new Port(udpPacket.SourcePort, "UDP/IP", sourceHost);
+                    Port port = new Port(Guid.NewGuid(), udpPacket.SourcePort, "UDP/IP", sourceHost);
                     if (!sourceHost.Ports.Contains(port))
                     {
                         sourceHost.Ports.Add(port);
@@ -118,7 +118,7 @@ namespace NetworkScanner.Model.Utils
                 }
                 if (destHost != null)
                 {
-                    Port port = new Port(udpPacket.SourcePort, "UDP/IP", destHost);
+                    Port port = new Port(Guid.NewGuid(), udpPacket.SourcePort, "UDP/IP", destHost);
                     if (!destHost.Ports.Contains(port))
                     {
                         destHost.Ports.Add(port);
@@ -157,7 +157,7 @@ namespace NetworkScanner.Model.Utils
                  */
                 if (sourceHost != null)
                 {
-                    Port port = new Port(tcpPacket.SourcePort, "TCP/IP", sourceHost);
+                    Port port = new Port(Guid.NewGuid(), tcpPacket.SourcePort, "TCP/IP", sourceHost);
                     if (!sourceHost.Ports.Contains(port))
                     {
                         sourceHost.Ports.Add(port);
@@ -166,7 +166,7 @@ namespace NetworkScanner.Model.Utils
                 }
                 if (destHost != null)
                 {
-                    Port port = new Port(tcpPacket.SourcePort, "TCP/IP", destHost);
+                    Port port = new Port(Guid.NewGuid(), tcpPacket.SourcePort, "TCP/IP", destHost);
                     if (!destHost.Ports.Contains(port))
                     {
                         destHost.Ports.Add(port);

@@ -39,8 +39,8 @@
             </MenuItem>
             <MenuItem x:Name="DeviceButton" Height="25" Header="Выбор сетевого устройства"/>
             <MenuItem Header="Импорт/Экспорт">
-                <MenuItem Header="Сохранить"/>
-                <MenuItem Header="Загрузить"/>
+                <MenuItem Header="Сохранить" Command="{Binding SaveData}"/>
+                <MenuItem Header="Загрузить" Command="{Binding LoadData}"/>
             </MenuItem>
             <MenuItem Height="25" Header="Выход" Click="OnExitButtonPressed"/>
         </Menu>

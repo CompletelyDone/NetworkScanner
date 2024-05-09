@@ -5,6 +5,9 @@ using SharpPcap;
 using System.Collections.ObjectModel;
 using ViewModel.Base;
 using ViewModel.Interfaces;
+using NetworkScanner.Database.Context;
+using AutoMapper;
+using NetworkScanner.Database.Entities;
 
 namespace ViewModel
 {
@@ -13,6 +16,7 @@ namespace ViewModel
         private readonly IDispatcherFix dispatcher;
         private readonly IErrorGenerator errorGenerator;
         private ManufacturerScanner comparerMacWithVendor = new ManufacturerScanner();
+        private IMapper mapper;
 
         private ObservableCollection<ILiveDevice> devices = new ObservableCollection<ILiveDevice>();
         public ObservableCollection<ILiveDevice> Devices
@@ -81,6 +85,12 @@ namespace ViewModel
         {
             this.dispatcher = dispatcher;
             this.errorGenerator = errorGenerator;
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Host, HostEntity>().ReverseMap();
+                cfg.CreateMap<Port, PortEntity>().ReverseMap();
+            });
+            mapper = config.CreateMapper();
 
             var devs = DeviceScanner.Scan();
             dispatcher.Invoke(() =>
@@ -94,6 +104,8 @@ namespace ViewModel
             StartScan = new Command(StartScanMethod);
             StopScan = new Command(StopScanMethod);
             ClearHosts = new Command(ClearHostsMethod);
+            SaveData = new Command(SaveDataMethod);
+            LoadData = new Command(LoadDataMethod);
         }
 
 
@@ -201,7 +213,7 @@ namespace ViewModel
             }
         }
 
-        public Command ClearHosts {  get; private set; }
+        public Command ClearHosts { get; private set; }
         private void ClearHostsMethod()
         {
             if (IsRunning)
@@ -214,5 +226,29 @@ namespace ViewModel
                 OnPropertyChanged(nameof(FilteredHosts));
             }
         }
+
+        public Command SaveData { get; private set; }
+        private void SaveDataMethod()
+        {
+            if (IsRunning)
+            {
+                errorGenerator.GenerateError("Остановите работу сканера");
+                return;
+            }
+            using (var db = new SQLiteContext())
+            {
+                var hostsEntity = new List<HostEntity>();
+                foreach (var host in FilteredHosts)
+                {
+                    hostsEntity.Add(mapper.Map<HostEntity>(host));
+                }
+                db.Hosts.AddRange(hostsEntity);
+                db.SaveChanges();
+            }
+        }
+
+        public Command LoadData { get; private set;}
+        private void LoadDataMethod() { }
+
     }
 }

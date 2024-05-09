@@ -2,18 +2,19 @@
 {
     public class Port
     {
+        public Guid Id { get; set; }
         public int Number { get; set; }
         public string Protocol { get; set; } = string.Empty;
         public Host Host { get; set; } = null!;
 
-        public Port(int number, string protocol, Host host)
+        public Port(Guid id, int number, string protocol, Host host)
         {
             Number = number;
             Protocol = protocol;
             Host = host;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj == null || GetType() != obj.GetType())
                 return false;

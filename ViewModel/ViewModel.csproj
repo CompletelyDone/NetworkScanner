@@ -9,6 +9,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model\NetworkScanner.Model.csproj" />
+    <ProjectReference Include="..\NetworkScanner.Database\NetworkScanner.Database.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
   </ItemGroup>
 
 </Project>
