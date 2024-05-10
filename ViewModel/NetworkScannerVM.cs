@@ -245,6 +245,7 @@ namespace ViewModel
                 db.Hosts.AddRange(hostsEntity);
                 db.SaveChanges();
             }
+            errorGenerator.GenerateError("Результаты сохранены в ./Saves/Save.db");
         }
 
         public Command LoadData { get; private set;}

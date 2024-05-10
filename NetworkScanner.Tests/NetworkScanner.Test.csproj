@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model\NetworkScanner.Model.csproj" />
+    <ProjectReference Include="..\NetworkScanner.Database\NetworkScanner.Database.csproj" />
   </ItemGroup>
 
   <ItemGroup>

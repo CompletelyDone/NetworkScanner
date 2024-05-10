@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
+    <ProjectReference Include="..\ViewModel\NetworkScanner.ViewModel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

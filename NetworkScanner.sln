@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "View", "View\View.csproj", "{46C5EBF9-8264-486B-A49B-5E5C9AE2E4E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkScanner.View", "View\NetworkScanner.View.csproj", "{46C5EBF9-8264-486B-A49B-5E5C9AE2E4E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModel", "ViewModel\ViewModel.csproj", "{7EE5A60C-5804-433D-B05C-A9A59112C644}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkScanner.ViewModel", "ViewModel\NetworkScanner.ViewModel.csproj", "{7EE5A60C-5804-433D-B05C-A9A59112C644}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkScanner.Model", "Model\NetworkScanner.Model.csproj", "{84434E61-B083-4790-9F6D-838C59864753}"
 EndProject
