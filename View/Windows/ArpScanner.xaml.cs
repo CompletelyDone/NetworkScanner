@@ -1,6 +1,5 @@
 ﻿using NetworkScanner.Model.Utils;
 using SharpPcap;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using View.Utils;
@@ -13,22 +12,12 @@ namespace View.Windows
     /// </summary>
     public partial class ArpScanner : Window
     {
-        private NetworkScanner? parentWindow;
-        public ArpScanner()
+        private readonly NetworkScanner parentWindow;
+
+        public ArpScanner(NetworkScanner parent, ILiveDevice device, ManufacturerScanner comparer)
         {
             InitializeComponent();
 
-            //Исправить DEBUG версия
-            var devs = DeviceScanner.Scan();
-            var comparer = new ManufacturerScanner();
-            DispatcherFix dispatcher = new DispatcherFix(Application.Current.Dispatcher);
-
-            //Исправить DEBUG версия
-
-            this.DataContext = new ArpScannerVM(devs[0], comparer, dispatcher);
-        }
-        public ArpScanner(NetworkScanner parent, ILiveDevice device, ManufacturerScanner comparer)
-        {
             parentWindow = parent;
             DispatcherFix dispatcher = new DispatcherFix(Application.Current.Dispatcher);
             this.DataContext = new ArpScannerVM(device, comparer, dispatcher);

@@ -30,9 +30,17 @@ namespace ViewModel
         }
 
         private ILiveDevice? selectedDevice;
+        public ILiveDevice? SelectedDevice
+        {
+            get => selectedDevice;
+            set
+            {
+                selectedDevice = value;
+            }
+        }
         public void SelectDevice(ILiveDevice device)
         {
-            selectedDevice = device;
+            SelectedDevice = device;
         }
 
         private ObservableCollection<Host> hosts = new ObservableCollection<Host>();
@@ -251,5 +259,18 @@ namespace ViewModel
         public Command LoadData { get; private set;}
         private void LoadDataMethod() { }
 
+        public void GetHostsFromArpScanner(List<Host> hosts)
+        {
+            foreach (var host in hosts)
+            {
+                if (!Hosts.Contains(host))
+                {
+                    dispatcher.Invoke(() =>
+                    {
+                        Hosts.Add(host);
+                    });
+                }
+            }
+        }
     }
 }

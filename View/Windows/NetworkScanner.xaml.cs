@@ -1,6 +1,6 @@
 ﻿using NetworkScanner.Model.Extensions;
 using NetworkScanner.Model.Models;
-using System;
+using NetworkScanner.Model.Utils;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,10 +15,13 @@ namespace View.Windows
     /// </summary>
     public partial class NetworkScanner : Window
     {
+        private ManufacturerScanner manufacturerScanner;
+
         public NetworkScanner()
         {
             InitializeComponent();
 
+            manufacturerScanner = new ManufacturerScanner();
             DispatcherFix dispatcher = new DispatcherFix(Application.Current.Dispatcher);
             ErrorGenerator generator = new ErrorGenerator();
 
@@ -32,16 +35,23 @@ namespace View.Windows
 
         public void ReceiveHosts(List<Host> hosts)
         {
-            foreach (Host host in hosts)
-            {
-                Console.WriteLine(host);
-            }
+            var dataContext = this.DataContext as NetworkScannerVM;
+
+            dataContext?.GetHostsFromArpScanner(hosts);
         }
 
         #region ARPScannerButton
         private void OpenARPScanner(object sender, RoutedEventArgs e)
         {
-            ArpScanner arpScanner = new ArpScanner();
+            var dataContext = this.DataContext as NetworkScannerVM;
+            var device = dataContext?.SelectedDevice;
+            if(device == null)
+            {
+                ErrorGenerator generator = new ErrorGenerator();
+                generator.GenerateError("Выберете устройство");
+                return;
+            }
+            ArpScanner arpScanner = new ArpScanner(this, device, manufacturerScanner);
             arpScanner.Show();
         }
         #endregion
